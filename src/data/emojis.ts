@@ -1,27 +1,21 @@
 import type { Category, Emoji, CategoryId } from '../types'
-import { renderArt, svgToDataUrl, type ArtRecipe } from './emojiArt'
 import { ASSET_EMOJIS } from './assetEmojis'
+import { bigEyes, bigMouth, eyesOf, mouthOf, randomRecipe, type CursedRecipe } from '../lib/cursed'
 
 export const CATEGORIES: Category[] = [
-  { id: 'reactions', label: 'Reactions', blurb: 'for when words are too much effort', color: 'bg-sun', glyph: '‼' },
-  { id: 'vibes', label: 'Vibes', blurb: 'immaculate, unexplainable', color: 'bg-lilac', glyph: '✦' },
-  { id: 'cursed', label: 'Cursed', blurb: 'do not look directly at these', color: 'bg-tomato', glyph: '☠' },
-  { id: 'copium', label: 'Copium', blurb: 'inhale responsibly', color: 'bg-sky', glyph: '☁' },
-  { id: 'gremlin', label: 'Gremlin', blurb: '3am behaviour', color: 'bg-lime', glyph: '⚡' },
-  { id: 'wholesome', label: 'Wholesome', blurb: 'touch grass edition', color: 'bg-bubblegum', glyph: '♥' },
-  { id: 'stickers', label: 'Text Stickers', blurb: 'say less (literally)', color: 'bg-tangerine', glyph: 'Aa' },
+  { id: 'cursed', label: 'Cursed', blurb: 'something is wrong with their face', color: '#b6ff00', glyph: '👁️' },
+  { id: 'bigeyes', label: 'Big Eyes', blurb: 'pupils fully dilated', color: '#00e5ff', glyph: '😳' },
+  { id: 'deepfried', label: 'Deep Fried', blurb: 'extra crispy, 400°F', color: '#ff5a00', glyph: '🔥' },
+  { id: 'melted', label: 'Melted', blurb: 'physics has left the chat', color: '#c77dff', glyph: '🫠' },
+  { id: 'mashups', label: 'Mashups', blurb: 'two emojis, one braincell', color: '#ff2e88', glyph: '🧬' },
+  { id: 'reactions', label: 'Reactions', blurb: 'captioned for the group chat', color: '#ffe600', glyph: '💬' },
 ]
 
-export const CUSTOM_CATEGORY: Category = {
-  id: 'custom',
-  label: 'Your Lab',
-  blurb: 'fresh out of the creator',
-  color: 'bg-mint',
-  glyph: '⚗',
-}
+export const ENDLESS_CATEGORY: Category = { id: 'endless', label: 'Endless', blurb: 'freshly generated, never seen before', color: '#ffffff', glyph: '♾️' }
+export const CUSTOM_CATEGORY: Category = { id: 'custom', label: 'My Cooks', blurb: 'made by you', color: '#b6ff00', glyph: '🧪' }
 
 export function getCategory(id: CategoryId): Category {
-  return CATEGORIES.find((c) => c.id === id) ?? CUSTOM_CATEGORY
+  return CATEGORIES.find((c) => c.id === id) ?? (id === 'endless' ? ENDLESS_CATEGORY : CUSTOM_CATEGORY)
 }
 
 interface Seed {
@@ -29,124 +23,100 @@ interface Seed {
   category: CategoryId
   tags: string[]
   description: string
-  author: string
   uses: number
-  daysAgo: number
-  art: ArtRecipe
+  recipe: CursedRecipe
 }
 
+const S = (name: string, category: CategoryId, tags: string[], description: string, uses: number, recipe: CursedRecipe): Seed => ({
+  name,
+  category,
+  tags,
+  description,
+  uses,
+  recipe,
+})
+
 const SEEDS: Seed[] = [
-  // ---------- reactions ----------
-  { name: 'Skull Laugh', category: 'reactions', tags: ['dead', 'lmao', 'crying', 'funny'], description: 'I am deceased. Please water my plants.', author: 'pixelgoblin', uses: 98210, daysAgo: 40,
-    art: { shape: 'circle', fill: '#f4f4f4', eyes: 'x', mouth: 'teeth', extras: ['tears'] } },
-  { name: 'Shook', category: 'reactions', tags: ['shocked', 'omg', 'surprised'], description: 'Brain received the information and immediately rejected it.', author: 'nyanbyte', uses: 54012, daysAgo: 12,
-    art: { shape: 'blob', fill: '#ffd23f', eyes: 'wide', mouth: 'scream', extras: ['sweat'] } },
-  { name: 'Side Eye Supreme', category: 'reactions', tags: ['suspicious', 'judging', 'side-eye', 'hmm'], description: 'I saw that. Everyone saw that.', author: 'dorito_saint', uses: 76543, daysAgo: 66,
-    art: { shape: 'squircle', fill: '#ff8a1f', eyes: 'side', mouth: 'flat' } },
-  { name: 'Okay And', category: 'reactions', tags: ['whatever', 'unbothered', 'meh'], description: 'Your point has been noted and discarded.', author: 'lowpolyleo', uses: 23111, daysAgo: 5,
-    art: { shape: 'circle', fill: '#b69cff', eyes: 'tired', mouth: 'smirk' } },
-  { name: 'Scream Into Void', category: 'reactions', tags: ['aaa', 'panic', 'stress', 'screaming'], description: 'Volume set to maximum, location set to nowhere.', author: 'voidpost', uses: 41999, daysAgo: 20,
-    art: { shape: 'melt', fill: '#ff5b5b', eyes: 'wide', mouth: 'scream', extras: ['steam'] } },
-  { name: 'Excuse Me??', category: 'reactions', tags: ['what', 'confused', 'rude'], description: 'Reading the group chat after muting it for one hour.', author: 'nyanbyte', uses: 18877, daysAgo: 2,
-    art: { shape: 'egg', fill: '#7cc8ff', eyes: 'dots', mouth: 'o', extras: ['sweat'] } },
-  { name: 'Clapping Back', category: 'reactions', tags: ['savage', 'roast', 'clap'], description: 'Load-bearing sass. Do not remove.', author: 'dorito_saint', uses: 12034, daysAgo: 30,
-    art: { shape: 'blob', fill: '#ff4fa3', eyes: 'sus', mouth: 'smirk', extras: ['hand'] } },
+  // ---------------- big eyes
+  S('Crying Laughing (Awake)', 'bigeyes', ['laughing', 'crying', 'lmao', 'wide eyes'], 'Laughing so hard the eyes opened.', 98_200, { base: '😂', warps: bigEyes(2, 0.22) }),
+  S('Rolling Unwell', 'bigeyes', ['rofl', 'laughing', 'unhinged'], 'On the floor. Vision blurry. Still laughing.', 71_400, { base: '🤣', warps: bigEyes(1.8, 0.2) }),
+  S('Pleading Max', 'bigeyes', ['please', 'begging', 'pleading', 'puppy'], 'Weaponised puppy eyes. Resistance is futile.', 88_010, { base: '🥺', warps: bigEyes(1.4, 0.2) }),
+  S('Flushed 4K', 'bigeyes', ['embarrassed', 'flushed', 'shook'], 'Saw the message. Saw it in 4K.', 64_300, { base: '😳', warps: bigEyes(1.5, 0.21) }),
+  S('Smiling Through It', 'bigeyes', ['smile', 'fine', 'creepy'], 'Everything is fine. Eyes are not.', 52_900, { base: '🙂', warps: bigEyes(2.2, 0.19) }),
+  S('Skull Stare', 'bigeyes', ['dead', 'skull', 'stare'], 'Dead, but paying close attention.', 49_100, { base: '💀', warps: bigEyes(1.3, 0.18) }),
+  S('Moai Noticed', 'bigeyes', ['moai', 'stone', 'staring'], 'The moai has seen what you did.', 45_600, { base: '🗿', warps: [{ kind: 'bulge', x: 0.42, y: 0.42, r: 0.15, amount: 1.4 }, { kind: 'bulge', x: 0.62, y: 0.42, r: 0.15, amount: 1.4 }] }),
+  S('Sobbing Wide', 'bigeyes', ['crying', 'sob', 'sad'], 'Tears at full pressure, eyes at full aperture.', 41_000, { base: '😭', warps: bigEyes(1.8, 0.21) }),
+  S('Doggo Overclocked', 'bigeyes', ['dog', 'cute', 'wide eyes'], 'Heard the word "walk".', 38_800, { base: '🐶', warps: bigEyes(1.8, 0.17) }),
+  S('Cat Loading', 'bigeyes', ['cat', 'shook', 'wide eyes'], 'Pupils: buffering.', 36_200, { base: '🐱', warps: bigEyes(1.8, 0.17) }),
+  S('Grin Too Wide', 'bigeyes', ['grin', 'smile', 'mouth'], 'The smile kept going.', 33_700, { base: '😀', warps: [bigMouth(1.3, 0.26), ...bigEyes(0.6, 0.15)] }),
 
-  // ---------- vibes ----------
-  { name: 'Main Character', category: 'vibes', tags: ['protagonist', 'cool', 'confident'], description: 'Soundtrack is playing. Slow motion is engaged.', author: 'starlitbean', uses: 66120, daysAgo: 14,
-    art: { shape: 'circle', fill: '#ffd23f', eyes: 'none', mouth: 'smirk', extras: ['shades', 'sparkles'] } },
-  { name: 'Delulu Sparkle', category: 'vibes', tags: ['delusional', 'manifesting', 'dreamy'], description: 'Delulu is the solulu. Trust the process.', author: 'mothmilk', uses: 47788, daysAgo: 9,
-    art: { shape: 'blob', fill: '#ffb3d1', eyes: 'stars', mouth: 'smile', extras: ['sparkles', 'blush'] } },
-  { name: 'Unbothered King', category: 'vibes', tags: ['royalty', 'chill', 'unbothered'], description: 'Moisturized. In my lane. Flourishing.', author: 'lowpolyleo', uses: 39001, daysAgo: 52,
-    art: { shape: 'squircle', fill: '#c6ff3d', eyes: 'closed', mouth: 'smile', extras: ['crown'] } },
-  { name: 'Ghost Mode', category: 'vibes', tags: ['ghosting', 'offline', 'antisocial'], description: 'Read at 14:02. Never replied. Thriving.', author: 'voidpost', uses: 28450, daysAgo: 21,
-    art: { shape: 'ghost', fill: '#ffffff', eyes: 'dots', mouth: 'o' } },
-  { name: 'Anime Eyes', category: 'vibes', tags: ['kawaii', 'pleading', 'please'], description: 'Weaponised cuteness. Effective 100% of the time.', author: 'mothmilk', uses: 59980, daysAgo: 33,
-    art: { shape: 'circle', fill: '#ffd23f', eyes: 'shiny', mouth: 'cat', extras: ['blush'] } },
-  { name: 'Spicy Take', category: 'vibes', tags: ['hot', 'fire', 'controversial'], description: 'This opinion is legally classified as a weapon.', author: 'pixelgoblin', uses: 31260, daysAgo: 17,
-    art: { shape: 'blob', fill: '#ff5b5b', eyes: 'sus', mouth: 'grin', extras: ['fire'] } },
-  { name: 'Star Struck Blob', category: 'vibes', tags: ['amazed', 'wow', 'starry'], description: 'Stars in eyes, no thoughts in head.', author: 'starlitbean', uses: 22004, daysAgo: 44,
-    art: { shape: 'star', fill: '#ffd23f', eyes: 'happy', mouth: 'smile' } },
+  // ---------------- cursed (face parts)
+  S('Real Eyes', 'cursed', ['eyes', 'realistic', 'creepy', 'stare'], 'Upgraded to real eyes. Regrets nothing.', 91_300, { base: '🙂', layers: eyesOf('👁️', 0.2) }),
+  S('Lip Service', 'cursed', ['lips', 'mouth', 'creepy'], 'The mouth was replaced. Do not ask by whom.', 72_800, { base: '😐', layers: [mouthOf('👄', 0.3)] }),
+  S('Full Upgrade', 'cursed', ['eyes', 'lips', 'creepy', 'stare'], 'Eyes AND lips. Maximum realism achieved.', 66_000, { base: '😶', layers: [...eyesOf('👁️', 0.19), mouthOf('👄', 0.28)] }),
+  S('Cowboy Stare', 'cursed', ['cowboy', 'yeehaw', 'eyes'], 'Yeehaw, but haunted.', 58_400, { base: '🤠', layers: [...eyesOf('👁️', 0.17, 0.05), mouthOf('👄', 0.22, 0.03)] }),
+  S('Clown Upgrade', 'cursed', ['clown', 'eyes', 'honk'], 'Honk. With depth perception.', 37_000, { base: '🤡', layers: eyesOf('👁️', 0.18, 0.02) }),
+  S('Biting Lip', 'cursed', ['flirt', 'lips', 'rizz'], 'Unsolicited rizz detected.', 61_500, { base: '😏', layers: [mouthOf('🫦', 0.3)] }),
+  S('Moon Has Eyes', 'cursed', ['moon', 'eyes', 'night'], 'Moon is watching. Go to sleep.', 29_800, { base: '🌚', layers: [{ char: '👁️', x: 0.4, y: 0.42, size: 0.18 }, { char: '👁️', x: 0.62, y: 0.42, size: 0.18 }] }),
+  S('Spiral Brain', 'cursed', ['dizzy', 'hypnotised', 'confused'], 'Thinking about one (1) email.', 34_200, { base: '😶', layers: eyesOf('🌀', 0.2) }),
+  S('Star Eyes Too Many', 'cursed', ['star', 'excited', 'amazed'], 'The excitement has become a medical condition.', 27_500, { base: '😮', layers: [...eyesOf('⭐', 0.24), { char: '⭐', x: 0.5, y: 0.25, size: 0.16 }] }),
+  S('Tongue Out Wrong', 'cursed', ['tongue', 'silly', 'goofy'], 'Wrong tongue, right energy.', 25_000, { base: '🙂', layers: [mouthOf('👅', 0.3, 0.05)] }),
+  S('Frog Upgrade', 'cursed', ['frog', 'eyes', 'pepe-ish'], 'He has seen the other side of the pond.', 30_900, { base: '🐸', layers: [{ char: '👁️', x: 0.33, y: 0.3, size: 0.2 }, { char: '👁️', x: 0.67, y: 0.3, size: 0.2 }] }),
 
-  // ---------- cursed ----------
-  { name: 'Melting Brain', category: 'cursed', tags: ['brainrot', 'tired', 'fried'], description: 'Seven hours of scrolling will do that to you.', author: 'voidpost', uses: 70123, daysAgo: 7,
-    art: { shape: 'melt', fill: '#ffb3d1', eyes: 'spiral', mouth: 'wobbly', extras: ['brain'] } },
-  { name: 'Uncanny Grin', category: 'cursed', tags: ['creepy', 'smile', 'unsettling'], description: 'It is smiling. It has always been smiling.', author: 'hexkitten', uses: 45556, daysAgo: 28,
-    art: { shape: 'egg', fill: '#c6ff3d', eyes: 'dots', mouth: 'teeth' } },
-  { name: 'Spiral Out', category: 'cursed', tags: ['dizzy', 'confused', 'chaos'], description: 'Thinking about one (1) email.', author: 'hexkitten', uses: 26780, daysAgo: 3,
-    art: { shape: 'circle', fill: '#b69cff', eyes: 'spiral', mouth: 'wobbly', extras: ['sweat'] } },
-  { name: 'Clown Behaviour', category: 'cursed', tags: ['clown', 'fool', 'embarrassing'], description: 'Full makeup. Wig on. Honk honk.', author: 'dorito_saint', uses: 61002, daysAgo: 60,
-    art: { shape: 'circle', fill: '#ffffff', eyes: 'wide', mouth: 'grin', extras: ['clown', 'blush'] } },
-  { name: 'Haunted Egg', category: 'cursed', tags: ['egg', 'haunted', 'weird'], description: 'Found in the fridge. It was not there before.', author: 'mothmilk', uses: 8890, daysAgo: 1,
-    art: { shape: 'egg', fill: '#fff8e7', eyes: 'x', mouth: 'o', extras: ['halo'] } },
-  { name: 'Screaming Star', category: 'cursed', tags: ['star', 'scream', 'loud'], description: 'Twinkle twinkle, absolutely not okay.', author: 'pixelgoblin', uses: 15333, daysAgo: 11,
-    art: { shape: 'star', fill: '#ff8a1f', eyes: 'dots', mouth: 'o' } },
-  { name: 'Sweaty Ghost', category: 'cursed', tags: ['nervous', 'ghost', 'anxious'], description: 'Haunting your DMs with anxiety.', author: 'hexkitten', uses: 11220, daysAgo: 19,
-    art: { shape: 'ghost', fill: '#7cc8ff', eyes: 'wide', mouth: 'wobbly', extras: ['sweat'] } },
+  // ---------------- deep fried
+  S('Deep Fried Crying', 'deepfried', ['laughing', 'fried', 'lmao', 'crispy'], 'Fried at 400°F. Still laughing.', 83_000, { base: '😂', fry: 0.85, warps: bigEyes(0.8, 0.18), seed: 3 }),
+  S('Crispy Skull', 'deepfried', ['dead', 'skull', 'fried'], 'Dead, then deep fried. Thorough.', 69_300, { base: '💀', fry: 0.9, seed: 7 }),
+  S('Fried Thumbs', 'deepfried', ['ok', 'thumbs up', 'fried'], 'Approval, extra crispy.', 47_700, { base: '👍', fry: 0.8, stretchX: 1.15, seed: 5 }),
+  S('Burnt Moai', 'deepfried', ['moai', 'fried', 'stone'], 'Carved by ancients. Fried by teenagers.', 40_500, { base: '🗿', fry: 0.95, seed: 9 }),
+  S('Sizzling Pleading', 'deepfried', ['please', 'fried', 'pleading'], 'Please (crunchy).', 37_400, { base: '🥺', fry: 0.75, warps: bigEyes(0.9, 0.2), seed: 2 }),
+  S('Oil Bath Cowboy', 'deepfried', ['cowboy', 'fried'], 'Yeehaw at 180°C.', 28_100, { base: '🤠', fry: 0.9, seed: 11 }),
+  S('Fried 100', 'deepfried', ['100', 'facts', 'fried'], 'Facts, but crunchy.', 55_200, { base: '💯', fry: 1, stretchY: 1.15, seed: 4 }),
+  S('Mind Fried', 'deepfried', ['mind blown', 'fried', 'shock'], 'Brain left the fryer before the head did.', 31_600, { base: '🤯', fry: 0.85, seed: 8 }),
+  S('Crispy Fire', 'deepfried', ['fire', 'lit', 'fried'], 'It was already on fire. We fried it anyway.', 26_000, { base: '🔥', fry: 1, warps: [{ kind: 'bulge', x: 0.5, y: 0.55, r: 0.4, amount: 0.6 }], seed: 6 }),
 
-  // ---------- copium ----------
-  { name: 'This Is Fine', category: 'copium', tags: ['fine', 'everything is fine', 'denial'], description: 'Smiling through the structural failure.', author: 'lowpolyleo', uses: 88120, daysAgo: 70,
-    art: { shape: 'circle', fill: '#ffd23f', eyes: 'closed', mouth: 'smile', extras: ['fire', 'sweat'] } },
-  { name: 'Copium Huff', category: 'copium', tags: ['cope', 'coping', 'denial'], description: 'It was rigged anyway. I did not even want it.', author: 'starlitbean', uses: 49012, daysAgo: 26,
-    art: { shape: 'blob', fill: '#7cc8ff', eyes: 'closed', mouth: 'o', extras: ['steam'] } },
-  { name: 'Brave Smile', category: 'copium', tags: ['sad', 'pretending', 'ok'], description: 'Crying on the inside, thriving on the outside.', author: 'nyanbyte', uses: 37650, daysAgo: 15,
-    art: { shape: 'squircle', fill: '#ffb3d1', eyes: 'happy', mouth: 'smile', extras: ['tear'] } },
-  { name: 'Waterfall Tears', category: 'copium', tags: ['crying', 'sob', 'emotional'], description: 'Hydration levels: critical. Emotions: also critical.', author: 'mothmilk', uses: 52300, daysAgo: 38,
-    art: { shape: 'circle', fill: '#7cc8ff', eyes: 'closed', mouth: 'frown', extras: ['tears'] } },
-  { name: 'Hopium Halo', category: 'copium', tags: ['hope', 'optimism', 'angel'], description: 'Next week will definitely be different.', author: 'starlitbean', uses: 20100, daysAgo: 8,
-    art: { shape: 'egg', fill: '#fff8e7', eyes: 'stars', mouth: 'smile', extras: ['halo'] } },
-  { name: 'Sweats Nervously', category: 'copium', tags: ['nervous', 'awkward', 'oops'], description: 'Was asked a follow-up question in the meeting.', author: 'dorito_saint', uses: 44400, daysAgo: 48,
-    art: { shape: 'squircle', fill: '#ffd23f', eyes: 'wide', mouth: 'teeth', extras: ['sweat', 'sweat'] } },
+  // ---------------- melted
+  S('Meltdown Laugh', 'melted', ['laughing', 'melting', 'drip'], 'Laughed until structurally unsound.', 50_800, { base: '😂', warps: [{ kind: 'melt', amount: 0.75 }], seed: 21 }),
+  S('Puddle Smile', 'melted', ['melting', 'fine', 'hot'], 'Smiling while becoming a liquid.', 46_300, { base: '🫠', warps: [{ kind: 'melt', amount: 0.9 }], seed: 4 }),
+  S('Swirl Brain', 'melted', ['dizzy', 'swirl', 'confused'], 'Brain.exe has stopped working.', 42_100, { base: '😵‍💫', warps: [{ kind: 'swirl', x: 0.5, y: 0.5, r: 0.48, amount: 4 }] }),
+  S('Wide Boi', 'melted', ['stretched', 'wide', 'thicc'], 'Horizontal mode activated.', 59_900, { base: '😐', stretchX: 1.45, stretchY: 0.8 }),
+  S('Tall Skull', 'melted', ['stretched', 'skull', 'tall'], 'Dead, but make it vertical.', 35_000, { base: '💀', stretchY: 1.4, stretchX: 0.75 }),
+  S('Wavy Moai', 'melted', ['moai', 'wavy', 'trippy'], 'The moai is vibing on a different frequency.', 22_700, { base: '🗿', warps: [{ kind: 'wave', amount: 0.8 }] }),
+  S('Drippy Cool', 'melted', ['cool', 'sunglasses', 'drip'], 'Too much drip. Literally.', 38_300, { base: '😎', warps: [{ kind: 'melt', amount: 0.6 }], seed: 9 }),
+  S('Vortex Cry', 'melted', ['crying', 'swirl', 'sad'], 'Tears went in a circle.', 24_800, { base: '😭', warps: [{ kind: 'swirl', x: 0.5, y: 0.5, r: 0.48, amount: -5 }] }),
+  S('Pixel Grief', 'melted', ['pixel', 'crying', 'retro', 'low quality'], 'Sadness at 144p.', 21_000, { base: '😭', pixelate: 0.55 }),
+  S('Inverted Laugh', 'melted', ['laughing', 'trippy', 'colour'], 'Laughing in another dimension.', 19_400, { base: '😂', hue: 180, warps: [{ kind: 'wave', amount: 0.4 }] }),
 
-  // ---------- gremlin ----------
-  { name: 'Gremlin Hours', category: 'gremlin', tags: ['3am', 'chaos', 'goblin', 'night'], description: 'Snacking on cereal from the box at 3:07am.', author: 'pixelgoblin', uses: 64321, daysAgo: 10,
-    art: { shape: 'blob', fill: '#c6ff3d', eyes: 'wide', mouth: 'grin' } },
-  { name: 'Goblin Mode', category: 'gremlin', tags: ['goblin', 'feral', 'unhinged'], description: 'Societal expectations have left the chat.', author: 'hexkitten', uses: 58744, daysAgo: 35,
-    art: { shape: 'melt', fill: '#3dffb5', eyes: 'sus', mouth: 'tongue' } },
-  { name: 'Silly Little Guy', category: 'gremlin', tags: ['silly', 'goofy', 'small'], description: 'He is just a little guy. Leave him alone.', author: 'mothmilk', uses: 71002, daysAgo: 4,
-    art: { shape: 'egg', fill: '#ff8a1f', eyes: 'dots', mouth: 'tongue', extras: ['cap'] } },
-  { name: 'Rizz Attempt', category: 'gremlin', tags: ['flirt', 'rizz', 'smooth'], description: '0 rizz detected. Proceeding anyway.', author: 'lowpolyleo', uses: 33090, daysAgo: 22,
-    art: { shape: 'squircle', fill: '#ff4fa3', eyes: 'sus', mouth: 'smirk', extras: ['sparkles'] } },
-  { name: 'Mischief Cat', category: 'gremlin', tags: ['cat', 'plotting', 'scheming'], description: 'Plotting to knock something off a table.', author: 'nyanbyte', uses: 29812, daysAgo: 13,
-    art: { shape: 'circle', fill: '#b69cff', eyes: 'sus', mouth: 'cat' } },
-  { name: 'Cap Detector', category: 'gremlin', tags: ['cap', 'lie', 'no cap', 'liar'], description: 'Scanning statement... 100% cap detected.', author: 'dorito_saint', uses: 40011, daysAgo: 6,
-    art: { shape: 'blob', fill: '#ffd23f', eyes: 'side', mouth: 'flat', extras: ['cap'] } },
+  // ---------------- mashups
+  S('Fingers Touching', 'mashups', ['shy', 'nervous', 'pleading', '👉👈'], 'Would you maybe… perhaps…', 87_600, { base: '🥺', baseScale: 0.72, layers: [{ char: '👉', x: 0.3, y: 0.86, size: 0.26 }, { char: '👈', x: 0.7, y: 0.86, size: 0.26 }] }),
+  S('Sus Photo', 'mashups', ['sus', 'suspicious', 'caught', 'camera'], 'Caught in 4K. Evidence secured.', 79_000, { base: '🤨', baseScale: 0.74, layers: [{ char: '📸', x: 0.8, y: 0.76, size: 0.34, rotate: -12 }] }),
+  S('Skull Trumpet', 'mashups', ['skull', 'trumpet', 'doot', 'spooky'], 'Doot doot. Spooky season forever.', 51_900, { base: '💀', baseScale: 0.7, layers: [{ char: '🎺', x: 0.74, y: 0.74, size: 0.38, rotate: 20 }] }),
+  S('Sipping Tea Frog', 'mashups', ['tea', 'gossip', 'frog', 'none of my business'], 'Not my business. Still listening.', 63_100, { base: '🐸', baseScale: 0.72, layers: [{ char: '☕', x: 0.75, y: 0.78, size: 0.3 }] }),
+  S('Clown Nails', 'mashups', ['clown', 'nails', 'unbothered'], 'Clowned, but manicured.', 33_300, { base: '🤡', baseScale: 0.74, layers: [{ char: '💅', x: 0.78, y: 0.78, size: 0.32 }] }),
+  S('Moai Sparkle', 'mashups', ['moai', 'sparkle', 'aesthetic'], 'Stone-cold but sparkling.', 44_700, { base: '🗿', baseScale: 0.72, layers: [{ char: '✨', x: 0.2, y: 0.2, size: 0.26 }, { char: '✨', x: 0.82, y: 0.78, size: 0.22 }] }),
+  S('This Is Fine', 'mashups', ['fine', 'fire', 'denial', 'everything is fine'], 'Coffee in hand. Building on fire.', 81_200, { base: '🙂', baseScale: 0.62, under: [{ char: '🔥', x: 0.22, y: 0.66, size: 0.44 }, { char: '🔥', x: 0.78, y: 0.66, size: 0.44 }], layers: [{ char: '☕', x: 0.7, y: 0.8, size: 0.26 }] }),
+  S('Big Brain Fire', 'mashups', ['smart', 'brain', 'genius'], 'One idea. It was on fire.', 30_700, { base: '🧠', baseScale: 0.7, layers: [{ char: '🔥', x: 0.5, y: 0.18, size: 0.34 }] }),
+  S('Chef Kiss Skull', 'mashups', ['perfect', 'chef kiss', 'dead'], 'So good I died.', 27_900, { base: '💀', baseScale: 0.72, layers: [{ char: '🤌', x: 0.78, y: 0.78, size: 0.32 }] }),
+  S('Salute Cap', 'mashups', ['cap', 'lie', 'salute', 'no cap'], 'Respectfully: that was cap.', 36_600, { base: '🫡', baseScale: 0.72, layers: [{ char: '🧢', x: 0.5, y: 0.16, size: 0.42 }] }),
+  S('Eye Mouth Eye', 'mashups', ['👁👄👁', 'stare', 'shook', 'what'], 'The classic. It is staring. It knows.', 92_500, { base: '', layers: [{ char: '👁️', x: 0.28, y: 0.42, size: 0.34 }, { char: '👁️', x: 0.72, y: 0.42, size: 0.34 }, { char: '👄', x: 0.5, y: 0.64, size: 0.3 }] }),
+  S('Cold Sweat Brain', 'mashups', ['cold', 'freezing', 'brain freeze'], 'Brain freeze, but emotionally.', 18_300, { base: '🥶', baseScale: 0.74, layers: [{ char: '🧊', x: 0.2, y: 0.8, size: 0.26 }, { char: '🧊', x: 0.82, y: 0.2, size: 0.2 }] }),
+  S('Crowned Clown', 'mashups', ['clown', 'king', 'crown'], 'King of the circus.', 26_400, { base: '🤡', baseScale: 0.72, layers: [{ char: '👑', x: 0.5, y: 0.13, size: 0.36 }] }),
+  S('Praying Sob', 'mashups', ['please', 'crying', 'begging', 'pray'], 'Begging the universe, respectfully.', 47_200, { base: '😭', baseScale: 0.72, layers: [{ char: '🙏', x: 0.5, y: 0.86, size: 0.3 }] }),
 
-  // ---------- wholesome ----------
-  { name: 'Heart Eyes Blob', category: 'wholesome', tags: ['love', 'crush', 'adore'], description: 'Down catastrophically bad for this.', author: 'starlitbean', uses: 82020, daysAgo: 50,
-    art: { shape: 'blob', fill: '#ff4fa3', eyes: 'hearts', mouth: 'smile', extras: ['blush'] } },
-  { name: 'Touch Grass', category: 'wholesome', tags: ['outside', 'nature', 'grass'], description: 'Successfully went outside. Report: it was nice.', author: 'mothmilk', uses: 30030, daysAgo: 18,
-    art: { shape: 'circle', fill: '#c6ff3d', eyes: 'happy', mouth: 'smile', extras: ['flower'] } },
-  { name: 'Soft Hours', category: 'wholesome', tags: ['cozy', 'soft', 'calm'], description: 'Blanket on. Tea brewed. Notifications off.', author: 'nyanbyte', uses: 25500, daysAgo: 24,
-    art: { shape: 'egg', fill: '#ffb3d1', eyes: 'closed', mouth: 'cat', extras: ['blush'] } },
-  { name: 'Proud Of U', category: 'wholesome', tags: ['proud', 'support', 'yay'], description: 'Look at you. Doing things. Incredible.', author: 'starlitbean', uses: 27650, daysAgo: 29,
-    art: { shape: 'star', fill: '#ffd23f', eyes: 'closed', mouth: 'smile', extras: ['blush'] } },
-  { name: 'Angel Behaviour', category: 'wholesome', tags: ['innocent', 'angel', 'good'], description: 'Did nothing wrong. Never have. Never will.', author: 'hexkitten', uses: 19930, daysAgo: 42,
-    art: { shape: 'circle', fill: '#fff8e7', eyes: 'happy', mouth: 'smile', extras: ['halo', 'blush'] } },
-  { name: 'Lil Flower Friend', category: 'wholesome', tags: ['flower', 'cute', 'friend'], description: 'A small friend who believes in you.', author: 'mothmilk', uses: 14500, daysAgo: 16,
-    art: { shape: 'blob', fill: '#3dffb5', eyes: 'shiny', mouth: 'smile', extras: ['flower'] } },
-
-  // ---------- stickers ----------
-  { name: 'Ratio', category: 'stickers', tags: ['ratio', 'owned', 'replies'], description: 'Deploy beneath a bad take.', author: 'voidpost', uses: 90012, daysAgo: 55,
-    art: { kind: 'sticker', text: 'ratio', fill: '#ff4fa3', tilt: -8 } },
-  { name: 'W', category: 'stickers', tags: ['win', 'w', 'nice'], description: 'A massive, undeniable win.', author: 'lowpolyleo', uses: 77777, daysAgo: 31,
-    art: { kind: 'sticker', text: 'W', fill: '#c6ff3d', tilt: 6 } },
-  { name: 'L', category: 'stickers', tags: ['loss', 'l', 'fail'], description: 'Take this L and carry it with pride.', author: 'lowpolyleo', uses: 70707, daysAgo: 31,
-    art: { kind: 'sticker', text: 'L', fill: '#ff5b5b', tilt: -6 } },
-  { name: 'FR FR', category: 'stickers', tags: ['for real', 'agree', 'true'], description: 'Notarised agreement. Legally binding.', author: 'nyanbyte', uses: 44120, daysAgo: 9,
-    art: { kind: 'sticker', text: 'fr fr', fill: '#ffd23f', tilt: 4 } },
-  { name: 'Mid', category: 'stickers', tags: ['mid', 'average', 'meh'], description: 'Perfectly, aggressively average.', author: 'hexkitten', uses: 38900, daysAgo: 27,
-    art: { kind: 'sticker', text: 'mid', fill: '#b69cff', tilt: -10 } },
-  { name: 'Based', category: 'stickers', tags: ['based', 'agree', 'respect'], description: 'Opinion has been certified based.', author: 'dorito_saint', uses: 35010, daysAgo: 37,
-    art: { kind: 'sticker', text: 'based', fill: '#3d7bff', ink: '#ffffff', tilt: 7 } },
-  { name: 'Slay', category: 'stickers', tags: ['slay', 'iconic', 'serve'], description: 'Ate and left no crumbs.', author: 'starlitbean', uses: 68400, daysAgo: 12,
-    art: { kind: 'sticker', text: 'slay', fill: '#ff8a1f', tilt: -4 } },
-  { name: 'Lore Drop', category: 'stickers', tags: ['lore', 'story', 'backstory'], description: 'For when the group chat gets backstory.', author: 'voidpost', uses: 16020, daysAgo: 2,
-    art: { kind: 'sticker', text: 'lore', fill: '#3dffb5', tilt: 9 } },
-  { name: 'Skill Issue', category: 'stickers', tags: ['skill issue', 'git gud', 'bad'], description: 'Diagnosis: severe skill issue.', author: 'pixelgoblin', uses: 51515, daysAgo: 19,
-    art: { kind: 'sticker', text: 'skill issue', fill: '#ffffff', tilt: -7 } },
-  { name: 'Bruh', category: 'stickers', tags: ['bruh', 'really', 'disappointed'], description: 'One syllable. Infinite disappointment.', author: 'pixelgoblin', uses: 60606, daysAgo: 45,
-    art: { kind: 'sticker', text: 'bruh', fill: '#7cc8ff', tilt: 5 } },
+  // ---------------- reactions (captioned)
+  S('Bruh Moai', 'reactions', ['bruh', 'moai', 'disappointed'], 'One syllable. Infinite disappointment.', 77_300, { base: '🗿', caption: 'bruh' }),
+  S("I'm Dead", 'reactions', ['dead', 'lmao', 'skull'], 'Cause of death: that message.', 85_800, { base: '💀', caption: "i'm dead" }),
+  S('Sus', 'reactions', ['sus', 'suspicious', 'hmm'], 'Kinda sus ngl.', 62_000, { base: '🤨', caption: 'sus' }),
+  S('Mid', 'reactions', ['mid', 'average', 'meh'], 'Aggressively average.', 49_900, { base: '😐', caption: 'mid' }),
+  S('Massive W', 'reactions', ['win', 'w', 'nice'], 'Undeniable win.', 58_000, { base: '👍', caption: 'W', fry: 0.4, seed: 2 }),
+  S('Take The L', 'reactions', ['loss', 'l', 'fail'], 'Take this L and carry it with pride.', 51_200, { base: '👎', caption: 'L' }),
+  S('No Cap', 'reactions', ['no cap', 'true', 'facts'], 'Notarised. Legally binding.', 43_900, { base: '🧢', caption: 'no cap' }),
+  S('Slay', 'reactions', ['slay', 'serve', 'iconic'], 'Ate and left no crumbs.', 56_600, { base: '💅', caption: 'slay' }),
+  S('Skill Issue', 'reactions', ['skill issue', 'git gud'], 'Diagnosis: severe skill issue.', 45_300, { base: '🤓', caption: 'skill issue' }),
+  S('Ratio', 'reactions', ['ratio', 'owned', 'replies'], 'Deploy beneath a bad take.', 66_700, { base: '😹', caption: 'ratio', captionPos: 'top' }),
+  S('Delulu', 'reactions', ['delusional', 'manifesting', 'dreamy'], 'Delulu is the solulu.', 39_100, { base: '🥰', caption: 'delulu', warps: bigEyes(0.7, 0.17) }),
+  S('Help', 'reactions', ['help', 'panic', 'scream'], 'Typed with shaking hands.', 34_000, { base: '😩', caption: 'help', fry: 0.5, seed: 12 }),
+  S('Real', 'reactions', ['real', 'agree', 'true'], 'So real it hurts.', 40_400, { base: '😔', caption: 'real' }),
+  S('Ok And?', 'reactions', ['unbothered', 'whatever', 'ok'], 'Your point has been noted and discarded.', 31_800, { base: '🙄', caption: 'ok and?' }),
 ]
 
 export function slugify(name: string): string {
@@ -159,26 +129,48 @@ export function slugify(name: string): string {
   )
 }
 
-const NOW = Date.now()
 const DAY = 86_400_000
+const NOW = Date.UTC(2026, 9, 31)
 
-const GENERATED: Emoji[] = SEEDS.map((s, i) => {
-  const svg = renderArt(s.art)
+const LIBRARY: Emoji[] = SEEDS.map((s, i) => {
   const slug = slugify(s.name)
   return {
-    id: `lm-${String(i + 1).padStart(3, '0')}-${slug}`,
+    id: `lm-${slug}`,
     slug,
     name: s.name,
     category: s.category,
     tags: s.tags,
     description: s.description,
-    author: s.author,
+    author: 'larpmoji',
     uses: s.uses,
-    createdAt: new Date(NOW - s.daysAgo * DAY).toISOString(),
-    svg,
-    src: svgToDataUrl(svg),
+    createdAt: new Date(NOW - ((i * 7) % 60) * DAY).toISOString(),
+    src: '',
+    recipe: s.recipe,
   }
 })
 
+/* ---------- endless generated emojis: id encodes the seed, so they can be favourited and restored */
+
+const ADJ = ['Feral', 'Haunted', 'Crispy', 'Unwell', 'Cursed', 'Rogue', 'Sleepy', 'Forbidden', 'Silly', 'Feral', 'Melted', 'Ancient', 'Sus', 'Turbo', 'Mid', 'Delulu']
+const NOUN = ['Goblin', 'Bean', 'Gremlin', 'Blob', 'Lad', 'Specimen', 'Creature', 'Entity', 'Menace', 'Gremlin', 'Unit', 'Thing', 'Guy', 'Bestie']
+
+export function generatedEmoji(seed: number): Emoji {
+  const recipe = randomRecipe(seed)
+  const name = `${ADJ[seed % ADJ.length]} ${NOUN[Math.floor(seed / 7) % NOUN.length]} #${seed % 10000}`
+  return {
+    id: `gen-${seed}`,
+    slug: `cursed-${seed}`,
+    name,
+    category: 'endless',
+    tags: ['random', 'generated', 'cursed', recipe.base ?? ''].filter(Boolean),
+    description: 'Freshly generated by the cursed engine. One of one.',
+    author: 'the machine',
+    uses: 0,
+    createdAt: new Date(NOW).toISOString(),
+    src: '',
+    recipe,
+  }
+}
+
 /** Central emoji dataset. Featured file-based assets come first. */
-export const EMOJIS: Emoji[] = [...ASSET_EMOJIS.filter((e) => e.featured), ...ASSET_EMOJIS.filter((e) => !e.featured), ...GENERATED]
+export const EMOJIS: Emoji[] = [...ASSET_EMOJIS.filter((e) => e.featured), ...ASSET_EMOJIS.filter((e) => !e.featured), ...LIBRARY]

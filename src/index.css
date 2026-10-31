@@ -1,87 +1,93 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-display: 'Bagel Fat One', 'Arial Black', Impact, system-ui, sans-serif;
-  --font-sans: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Space Mono', ui-monospace, monospace;
+  --font-display: Anton, Impact, 'Arial Narrow Bold', sans-serif;
+  --font-sans: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --color-ink: #111111;
-  --color-paper: #fff8e7;
-  --color-sun: #ffd23f;
-  --color-bubblegum: #ff4fa3;
-  --color-lime: #c6ff3d;
-  --color-sky: #7cc8ff;
-  --color-cobalt: #3d7bff;
-  --color-tangerine: #ff8a1f;
-  --color-lilac: #b69cff;
-  --color-mint: #3dffb5;
-  --color-tomato: #ff5b5b;
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-raised: #1c1c1c;
+  --color-line: #2b2b2b;
+  --color-fg: #f4f4f0;
+  --color-muted: #8c8c86;
+  --color-acid: #b6ff00;
+  --color-hot: #ff2e88;
+  --color-cyan: #00e5ff;
+  --color-fire: #ff5a00;
+  --color-volt: #ffe600;
+  --color-grape: #c77dff;
 
-  --shadow-hard: 4px 4px 0 0 #111;
-  --shadow-hard-sm: 2px 2px 0 0 #111;
-  --shadow-hard-lg: 8px 8px 0 0 #111;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-wobble: wobble 0.6s ease-in-out;
+  --animate-pop: pop 0.3s cubic-bezier(0.2, 1.6, 0.4, 1);
+  --animate-rise: rise 0.28s cubic-bezier(0.2, 1.2, 0.4, 1);
+  --animate-stamp: stamp 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+  --animate-float: float 3s ease-in-out infinite;
 
-  --animate-marquee: marquee 30s linear infinite;
-  --animate-wiggle: wiggle 0.5s ease-in-out;
-  --animate-pop: pop 0.25s cubic-bezier(0.2, 1.6, 0.4, 1);
-  --animate-rise: rise 0.3s cubic-bezier(0.2, 1.2, 0.4, 1);
-
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+  @keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(0) scale(1) }
+    20% { transform: rotate(-12deg) scale(1.15) }
+    40% { transform: rotate(10deg) scale(1.1) }
+    60% { transform: rotate(-6deg) scale(1.12) }
+    80% { transform: rotate(4deg) scale(1.05) }
   }
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(0); }
-    25% { transform: rotate(-8deg) scale(1.08); }
-    75% { transform: rotate(8deg) scale(1.08); }
+  @keyframes pop { from { transform: scale(0.5); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+  @keyframes rise { from { transform: translateY(28px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+  @keyframes stamp {
+    0% { transform: translate(-50%, -50%) rotate(-14deg) scale(2.4); opacity: 0 }
+    25% { transform: translate(-50%, -50%) rotate(-10deg) scale(1); opacity: 1 }
+    80% { transform: translate(-50%, -50%) rotate(-10deg) scale(1); opacity: 1 }
+    100% { transform: translate(-50%, -50%) rotate(-10deg) scale(0.9); opacity: 0 }
   }
-  @keyframes pop {
-    from { transform: scale(0.6); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  @keyframes rise {
-    from { transform: translateY(24px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
+  @keyframes float { 0%, 100% { transform: translateY(0) rotate(-4deg) } 50% { transform: translateY(-10px) rotate(4deg) } }
 }
 
 @layer base {
-  html { -webkit-tap-highlight-color: transparent; }
+  html { -webkit-tap-highlight-color: transparent; color-scheme: dark; }
   body {
-    @apply bg-paper text-ink font-sans antialiased;
-    background-image: radial-gradient(#11111122 1.2px, transparent 1.2px);
-    background-size: 18px 18px;
+    @apply bg-bg text-fg font-sans antialiased;
+    /* film grain */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
   }
-  ::selection { background: var(--color-bubblegum); color: #fff; }
-  :focus-visible { outline: 3px solid var(--color-cobalt); outline-offset: 3px; }
+  ::selection { background: var(--color-acid); color: #000; }
+  :focus-visible { outline: 2px solid var(--color-acid); outline-offset: 2px; }
+  input[type='range'] { accent-color: var(--color-acid); }
 }
 
-@utility sticker {
-  border: 3px solid var(--color-ink);
-  box-shadow: var(--shadow-hard);
+/* Classic meme caption text: white with a fat black outline */
+@utility meme {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: #fff;
+  -webkit-text-stroke: 0.09em #000;
+  paint-order: stroke fill;
+  letter-spacing: 0.01em;
 }
-@utility sticker-sm {
-  border: 2.5px solid var(--color-ink);
-  box-shadow: var(--shadow-hard-sm);
-}
-@utility press {
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-  &:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 #111; }
-  &:active { transform: translate(3px, 3px); box-shadow: 0 0 0 0 #111; }
-}
-@utility checker {
-  background-color: #fff;
-  background-image:
-    linear-gradient(45deg, #eee 25%, transparent 25%), linear-gradient(-45deg, #eee 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #eee 75%), linear-gradient(-45deg, transparent 75%, #eee 75%);
-  background-size: 16px 16px;
-  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 800;
+  transition: transform 0.12s ease, background-color 0.15s ease;
+  &:active { transform: scale(0.94); }
 }
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 }
+@utility checker {
+  background-color: #1a1a1a;
+  background-image:
+    linear-gradient(45deg, #232323 25%, transparent 25%), linear-gradient(-45deg, #232323 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #232323 75%), linear-gradient(-45deg, transparent 75%, #232323 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

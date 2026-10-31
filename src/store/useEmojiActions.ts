@@ -12,8 +12,8 @@ export function useEmojiActions() {
       try {
         const result = await sendEmoji(e)
         pushRecent(e.id)
-        if (result === 'copied') toast(`Copied ${e.name} — paste it anywhere!`, 'success', e.src)
-        else toast(`Image copy isn't supported here, so ${e.name} was downloaded instead.`, 'info', e.src)
+        if (result === 'copied') toast(`Copied! Now paste it in any chat`, 'success', e)
+        else toast(`Your browser can't copy images, so it was downloaded instead`, 'info', e)
       } catch (err) {
         toast(err instanceof Error ? err.message : 'Could not copy that emoji', 'error')
       }
@@ -39,7 +39,7 @@ export function useEmojiActions() {
         if (format === 'svg') downloadSvg(e)
         else await downloadPng(e)
         pushRecent(e.id)
-        toast(`Downloaded ${e.name}.${format}`, 'success', e.src)
+        toast(`Downloaded ${e.name}`, 'success', e)
       } catch (err) {
         toast(err instanceof Error ? err.message : 'Download failed', 'error')
       }

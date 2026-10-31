@@ -19,16 +19,18 @@ export default function App() {
   return (
     <AppStoreProvider>
       <Header />
-      <Marquee />
+      <div className="overflow-hidden">
+        <Marquee />
+      </div>
       <main className="pb-32">
         <Routes />
       </main>
-      <footer className="border-t-3 border-ink bg-ink text-white/70 text-sm">
-        <div className="mx-auto max-w-6xl px-4 py-6 flex flex-wrap justify-between gap-2 font-semibold">
+      <footer className="border-t border-line text-xs text-muted">
+        <div className="mx-auto max-w-7xl px-5 py-6 flex flex-wrap justify-between gap-2">
           <span>
-            <span className="font-display text-sun">LARPMOJI</span> · made for the group chat
+            <span className="meme text-base">LARP<span className="text-acid">MOJI</span></span> · emojis look like your phone’s own style
           </span>
-          <span className="font-mono text-xs">press / to search · K for keyboard</span>
+          <span>/ search · K keyboard</span>
         </div>
       </footer>
       <EmojiModal />

@@ -1,18 +1,12 @@
-export type CategoryId =
-  | 'reactions'
-  | 'vibes'
-  | 'cursed'
-  | 'copium'
-  | 'gremlin'
-  | 'wholesome'
-  | 'stickers'
-  | 'custom'
+import type { CursedRecipe } from './lib/cursed'
+
+export type CategoryId = 'cursed' | 'bigeyes' | 'deepfried' | 'melted' | 'mashups' | 'reactions' | 'endless' | 'custom'
 
 export interface Category {
   id: CategoryId
   label: string
   blurb: string
-  /** Tailwind background class used for chips + accents */
+  /** accent hex colour */
   color: string
   glyph: string
 }
@@ -28,8 +22,10 @@ export interface Emoji {
   author: string
   uses: number
   createdAt: string
-  /** data URL that can be dropped straight into <img src> */
+  /** image URL (file / data URL). Empty for recipe emojis until rendered. */
   src: string
+  /** cursed-engine recipe; rendered on demand in the browser */
+  recipe?: CursedRecipe
   /** raw SVG markup (generated emojis only) */
   svg?: string
   custom?: boolean

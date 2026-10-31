@@ -5,13 +5,12 @@ interface Props {
   value: string
   onChange: (v: string) => void
   placeholder?: string
-  /** listen for "/" to focus */
   hotkey?: boolean
   size?: 'lg' | 'sm'
   autoFocus?: boolean
 }
 
-export function SearchBar({ value, onChange, placeholder = 'Search the emoji archives…', hotkey, size = 'lg', autoFocus }: Props) {
+export function SearchBar({ value, onChange, placeholder = 'search: crying, skull, sus, rizz…', hotkey, size = 'lg', autoFocus }: Props) {
   const ref = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -29,8 +28,8 @@ export function SearchBar({ value, onChange, placeholder = 'Search the emoji arc
 
   const lg = size === 'lg'
   return (
-    <label className={`flex items-center gap-2 bg-white rounded-2xl ${lg ? 'sticker px-4 h-14' : 'sticker-sm px-3 h-10'}`}>
-      <Search className={lg ? 'size-6 shrink-0' : 'size-4 shrink-0'} aria-hidden />
+    <label className={`flex items-center gap-2 rounded-full bg-surface border border-line focus-within:border-acid transition-colors ${lg ? 'px-5 h-14' : 'px-3.5 h-10'}`}>
+      <Search className={`${lg ? 'size-5' : 'size-4'} shrink-0 text-muted`} aria-hidden />
       <span className="sr-only">Search emojis</span>
       <input
         ref={ref}
@@ -40,14 +39,14 @@ export function SearchBar({ value, onChange, placeholder = 'Search the emoji arc
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.key === 'Escape' && value && (e.stopPropagation(), onChange(''))}
         placeholder={placeholder}
-        className={`flex-1 min-w-0 bg-transparent outline-none placeholder:text-ink/40 font-semibold ${lg ? 'text-lg' : 'text-sm'} [&::-webkit-search-cancel-button]:hidden`}
+        className={`flex-1 min-w-0 bg-transparent outline-none placeholder:text-muted/70 ${lg ? 'text-base' : 'text-sm'} [&::-webkit-search-cancel-button]:hidden`}
       />
       {value ? (
-        <button type="button" onClick={() => onChange('')} className="rounded-full p-1 hover:bg-ink/10" aria-label="Clear search">
+        <button type="button" onClick={() => onChange('')} className="rounded-full p-1 hover:bg-raised" aria-label="Clear search">
           <X className="size-4" />
         </button>
       ) : (
-        hotkey && <kbd className="hidden sm:block font-mono text-xs border-2 border-ink/30 rounded-md px-1.5 text-ink/50">/</kbd>
+        hotkey && <kbd className="hidden sm:block text-xs border border-line rounded px-1.5 text-muted">/</kbd>
       )}
     </label>
   )

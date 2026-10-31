@@ -1,15 +1,16 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Emoji } from '../types'
-import { EMOJIS } from '../data/emojis'
+import { EMOJIS, generatedEmoji } from '../data/emojis'
 import { useLocalStorage } from './useLocalStorage'
 
 export type Route = 'explore' | 'favourites' | 'create'
+export type RemixPayload = { recipe?: Emoji['recipe']; src?: string; name?: string }
 export type ToastTone = 'success' | 'error' | 'info'
 export interface Toast {
   id: number
   message: string
   tone: ToastTone
-  image?: string
+  emoji?: Emoji
 }
 
 const MAX_RECENT = 32
@@ -18,6 +19,8 @@ interface Store {
   route: Route
   navigate: (r: Route) => void
   allEmojis: Emoji[]
+  /** look up any emoji by id, including generated (endless feed) ones */
+  resolveEmoji: (id: string) => Emoji | undefined
   customEmojis: Emoji[]
   addCustom: (e: Emoji) => void
   removeCustom: (id: string) => void
@@ -30,11 +33,11 @@ interface Store {
   setOpenEmoji: (e: Emoji | null) => void
   keyboardOpen: boolean
   setKeyboardOpen: (open: boolean) => void
-  remixSrc: string | null
+  remix: RemixPayload | null
   startRemix: (e: Emoji) => void
   clearRemix: () => void
   toasts: Toast[]
-  toast: (message: string, tone?: ToastTone, image?: string) => void
+  toast: (message: string, tone?: ToastTone, emoji?: Emoji) => void
   dismissToast: (id: number) => void
 }
 
@@ -52,9 +55,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const dismissToast = useCallback((id: number) => setToasts((t) => t.filter((x) => x.id !== id)), [])
   const toast = useCallback(
-    (message: string, tone: ToastTone = 'success', image?: string) => {
+    (message: string, tone: ToastTone = 'success', emoji?: Emoji) => {
       const id = nextId.current++
-      setToasts((t) => [...t.slice(-2), { id, message, tone, image }])
+      setToasts((t) => [...t.slice(-2), { id, message, tone, emoji }])
       setTimeout(() => dismissToast(id), 2800)
     },
     [dismissToast],
@@ -69,7 +72,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [recent, setRecent] = useLocalStorage<string[]>('larpmoji:recent', [], onStorageError)
   const [openEmoji, setOpenEmoji] = useState<Emoji | null>(null)
   const [keyboardOpen, setKeyboardOpen] = useState(false)
-  const [remixSrc, setRemixSrc] = useState<string | null>(null)
+  const [remix, setRemix] = useState<RemixPayload | null>(null)
 
   useEffect(() => {
     const onHash = () => setRoute(readRoute())
@@ -83,13 +86,33 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
-  const allEmojis = useMemo(() => [...customEmojis, ...EMOJIS], [customEmojis])
+  // File-based assets are only shown once their file actually exists (no broken tiles).
+  const [missingAssets, setMissingAssets] = useState<Set<string>>(() => new Set(EMOJIS.filter((e) => e.asset).map((e) => e.id)))
+  useEffect(() => {
+    EMOJIS.filter((e) => e.asset).forEach((e) => {
+      const img = new Image()
+      img.onload = () =>
+        setMissingAssets((m) => {
+          const n = new Set(m)
+          n.delete(e.id)
+          return n
+        })
+      img.src = e.src
+    })
+  }, [])
+  const allEmojis = useMemo(() => [...customEmojis, ...EMOJIS.filter((e) => !missingAssets.has(e.id))], [customEmojis, missingAssets])
   const favSet = useMemo(() => new Set(favourites), [favourites])
+  const byId = useMemo(() => new Map(allEmojis.map((e) => [e.id, e])), [allEmojis])
+  const resolveEmoji = useCallback(
+    (id: string) => byId.get(id) ?? (id.startsWith('gen-') ? generatedEmoji(Number(id.slice(4))) : undefined),
+    [byId],
+  )
 
   const value: Store = {
     route,
     navigate,
     allEmojis,
+    resolveEmoji,
     customEmojis,
     addCustom: (e) => setCustomEmojis((list) => [e, ...list]),
     removeCustom: (id) => {
@@ -102,7 +125,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     toggleFavourite: (e) => {
       const had = favSet.has(e.id)
       setFavourites((f) => (had ? f.filter((x) => x !== e.id) : [e.id, ...f]))
-      toast(had ? `Unfavourited ${e.name}` : `${e.name} added to favourites`, 'info', e.src)
+      toast(had ? `Removed ${e.name} from your stash` : `${e.name} saved to your stash`, 'info', e)
     },
     recent,
     pushRecent: (id) => setRecent((r) => [id, ...r.filter((x) => x !== id)].slice(0, MAX_RECENT)),
@@ -110,14 +133,14 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setOpenEmoji,
     keyboardOpen,
     setKeyboardOpen,
-    remixSrc,
+    remix,
     startRemix: (e) => {
-      setRemixSrc(e.src)
+      setRemix(e.recipe && !e.src ? { recipe: e.recipe, name: e.name } : { src: e.src, name: e.name })
       setOpenEmoji(null)
       setKeyboardOpen(false)
       navigate('create')
     },
-    clearRemix: () => setRemixSrc(null),
+    clearRemix: () => setRemix(null),
     toasts,
     toast,
     dismissToast,

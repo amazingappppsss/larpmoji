@@ -1,27 +1,30 @@
 import { AlertTriangle, Check, Info, X } from 'lucide-react'
 import { useStore } from '../store/AppStore'
+import { EmojiImage } from './EmojiImage'
 
 const TONE = {
-  success: { bg: 'bg-lime', Icon: Check },
-  error: { bg: 'bg-tomato', Icon: AlertTriangle },
-  info: { bg: 'bg-sky', Icon: Info },
+  success: { cls: 'bg-acid text-black', Icon: Check },
+  error: { cls: 'bg-hot text-white', Icon: AlertTriangle },
+  info: { cls: 'bg-fg text-black', Icon: Info },
 } as const
 
 export function Toasts() {
   const { toasts, dismissToast } = useStore()
   return (
-    <div className="fixed z-[70] top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 w-[min(92vw,26rem)] pointer-events-none" aria-live="polite" role="status">
+    <div className="fixed z-[70] top-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 w-[min(94vw,24rem)] pointer-events-none" aria-live="polite" role="status">
       {toasts.map((t) => {
-        const { bg, Icon } = TONE[t.tone]
+        const { cls, Icon } = TONE[t.tone]
         return (
-          <div key={t.id} className={`pointer-events-auto w-full flex items-center gap-3 rounded-2xl ${bg} px-3 py-2.5 sticker animate-pop`}>
-            {t.image ? (
-              <img src={t.image} alt="" className="size-9 object-contain shrink-0" />
+          <div key={t.id} className={`pointer-events-auto w-full flex items-center gap-3 rounded-2xl ${cls} pl-2 pr-2 py-2 shadow-2xl shadow-black/60 animate-pop`}>
+            {t.emoji ? (
+              <span className="grid place-items-center size-10 rounded-xl bg-black/85 shrink-0">
+                <EmojiImage emoji={t.emoji} compact className="size-8" />
+              </span>
             ) : (
-              <Icon className="size-5 shrink-0" aria-hidden />
+              <Icon className="size-5 shrink-0 ml-1" aria-hidden />
             )}
             <span className="flex-1 font-extrabold text-sm leading-tight">{t.message}</span>
-            <button onClick={() => dismissToast(t.id)} className="p-1 rounded-full hover:bg-ink/10" aria-label="Dismiss">
+            <button onClick={() => dismissToast(t.id)} className="p-1 rounded-full hover:bg-black/10" aria-label="Dismiss">
               <X className="size-4" />
             </button>
           </div>

@@ -1,14 +1,12 @@
-const ITEMS = ['no cap', '★', 'chronically online', '☠', 'certified lore', '✦', 'emoji crimes', '‼', 'touch grass (optional)', '⚡', 'ratio + L', '♥']
+const ITEMS = ['TAP = COPIED', '😂', 'PASTE IN ANY CHAT', '💀', 'WHATSAPP', '🗿', 'DISCORD', '🥺', 'IMESSAGE', '👁️👄👁️', 'INSTAGRAM', '🫠', 'SLACK', '🤨📸', 'TELEGRAM', '🔥']
 
 export function Marquee() {
   const row = [...ITEMS, ...ITEMS]
   return (
-    <div className="overflow-hidden border-y-3 border-ink bg-ink text-sun py-2" aria-hidden>
-      <div className="flex w-max animate-marquee gap-8 font-display text-lg uppercase tracking-wide whitespace-nowrap">
+    <div className="overflow-hidden bg-acid text-black py-1.5 -rotate-1 -mx-2 my-1" aria-hidden>
+      <div className="flex w-max animate-marquee gap-6 font-display text-xl tracking-wide whitespace-nowrap">
         {row.map((t, i) => (
-          <span key={i} className={i % 2 ? 'text-bubblegum' : ''}>
-            {t}
-          </span>
+          <span key={i}>{t}</span>
         ))}
       </div>
     </div>

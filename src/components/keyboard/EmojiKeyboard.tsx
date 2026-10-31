@@ -153,55 +153,55 @@ export function EmojiKeyboard({
   return (
     <>
       {/* backdrop (mobile only – desktop keeps the page usable) */}
-      <div className="fixed inset-0 z-40 bg-ink/40 sm:hidden" onClick={onClose} aria-hidden />
+      <div className="fixed inset-0 z-40 bg-black/60 sm:hidden" onClick={onClose} aria-hidden />
       <div
         ref={panelRef}
         role="dialog"
         aria-label={title}
-        className="fixed z-50 inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[420px] h-[min(78dvh,600px)] flex flex-col bg-paper rounded-t-[1.75rem] sm:rounded-[1.75rem] sticker shadow-hard-lg animate-rise pb-[env(safe-area-inset-bottom)]"
+        className="fixed z-50 inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[420px] h-[min(78dvh,600px)] flex flex-col bg-surface border border-line rounded-t-[1.75rem] sm:rounded-[1.75rem] shadow-2xl shadow-black animate-rise pb-[env(safe-area-inset-bottom)]"
       >
         {/* title bar */}
         <div className="flex items-center gap-2 px-4 pt-3 pb-2">
-          <span className="grid place-items-center size-8 rounded-lg bg-ink text-sun">
+          <span className="grid place-items-center size-8 rounded-lg bg-acid text-black">
             <Keyboard className="size-4" aria-hidden />
           </span>
-          <h2 className="font-display text-lg leading-none">{title}</h2>
-          <button onClick={onClose} className="ml-auto grid place-items-center size-9 rounded-full bg-white sticker-sm press" aria-label="Close keyboard">
+          <h2 className="font-display uppercase text-xl tracking-wide leading-none">{title}</h2>
+          <button onClick={onClose} className="btn ml-auto size-9 bg-raised hover:bg-line" aria-label="Close keyboard">
             <X className="size-4" />
           </button>
         </div>
 
         {/* selection preview */}
-        <div className="mx-3 mb-2 rounded-2xl bg-white border-[2.5px] border-ink p-2.5 flex items-center gap-3 min-h-[92px]">
+        <div className="mx-3 mb-2 rounded-2xl bg-raised border border-line p-2.5 flex items-center gap-3 min-h-[92px]">
           {selected ? (
             <>
-              <div className="grid place-items-center size-[72px] shrink-0 rounded-xl checker border-2 border-ink/10 overflow-hidden">
+              <div className="grid place-items-center size-[72px] shrink-0 rounded-xl checker overflow-hidden">
                 <EmojiImage emoji={selected} loading="eager" compact className="max-w-[64px] max-h-[64px] w-full h-full" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="font-extrabold leading-tight truncate">{selected.name}</div>
-                <div className="font-mono text-[11px] text-ink/60 truncate">:{selected.slug}:</div>
+                <div className="text-[11px] text-muted truncate">:{selected.slug}:</div>
                 <div className="mt-1.5 flex gap-1.5">
-                  <button onClick={() => onSend(selected)} className="flex items-center gap-1 rounded-full bg-lime px-3 py-1 text-xs font-extrabold sticker-sm press">
+                  <button onClick={() => onSend(selected)} className="btn h-8 px-3 bg-acid text-black text-xs">
                     <Copy className="size-3.5" /> Copy
                   </button>
-                  <button onClick={() => onDownload(selected)} className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-xs font-extrabold sticker-sm press" aria-label={`Download ${selected.name}`}>
+                  <button onClick={() => onDownload(selected)} className="btn size-8 bg-surface border border-line" aria-label={`Download ${selected.name}`}>
                     <Download className="size-3.5" />
                   </button>
                   <button
                     onClick={() => onToggleFavourite(selected)}
                     aria-pressed={fav}
-                    className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold sticker-sm press ${fav ? 'bg-bubblegum' : 'bg-white'}`}
+                    className={`btn size-8 border ${fav ? 'bg-hot border-hot text-white' : 'bg-surface border-line'}`}
                     aria-label={fav ? 'Remove from favourites' : 'Add to favourites'}
                   >
-                    <Heart className={`size-3.5 ${fav ? 'fill-ink' : ''}`} />
+                    <Heart className={`size-3.5 ${fav ? 'fill-white' : ''}`} />
                   </button>
                 </div>
               </div>
             </>
           ) : (
-            <p className="text-sm font-bold text-ink/60 px-1">
-              Tap an emoji to <span className="text-ink">copy the image</span>, then paste it into any chat.
+            <p className="text-sm text-muted px-1">
+              Tap an emoji → it's <span className="text-acid">copied as an image</span>. Paste it in any chat.
             </p>
           )}
         </div>
@@ -221,7 +221,7 @@ export function EmojiKeyboard({
                 onClick={() => jumpTo(s.id)}
                 title={s.label}
                 className={`shrink-0 grid place-items-center size-8 rounded-lg text-sm font-extrabold border-2 ${
-                  activeSection === s.id ? 'bg-sun border-ink' : 'border-transparent hover:bg-ink/5'
+                  activeSection === s.id ? 'bg-acid/20 border-acid' : 'border-transparent hover:bg-raised'
                 }`}
               >
                 {s.icon}
@@ -235,12 +235,12 @@ export function EmojiKeyboard({
         <div ref={scrollRef} onKeyDown={onGridKey} className="relative flex-1 overflow-y-auto overscroll-contain px-3 pt-1 pb-3 mt-1">
           {sections.map((s) => (
             <section key={s.id} data-section={s.id} className="pt-2 [content-visibility:auto] [contain-intrinsic-size:auto_200px]">
-              <h3 className="sticky top-0 z-10 bg-paper/95 backdrop-blur flex items-center gap-1.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-ink/60">
+              <h3 className="sticky top-0 z-10 bg-surface/95 backdrop-blur flex items-center gap-1.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-muted">
                 {s.icon} {s.label}
                 <span className="font-mono font-normal">{s.items.length}</span>
               </h3>
               {s.items.length === 0 ? (
-                <p className="text-xs font-semibold text-ink/40 py-2 px-1">
+                <p className="text-xs text-muted/70 py-2 px-1">
                   {s.id === 'recent' ? 'Emojis you copy will show up here.' : s.id === 'favourites' ? 'Heart an emoji to pin it here.' : 'No matches. Try another word.'}
                 </p>
               ) : (
@@ -252,8 +252,8 @@ export function EmojiKeyboard({
                       onClick={() => pick(e)}
                       title={`${e.name} — click to copy`}
                       aria-label={`Copy ${e.name}`}
-                      className={`grid place-items-center aspect-square rounded-xl transition-transform hover:scale-115 hover:bg-white active:scale-95 ${
-                        selected?.id === e.id ? 'bg-white ring-[2.5px] ring-ink' : ''
+                      className={`grid place-items-center aspect-square rounded-xl transition-transform hover:scale-115 hover:bg-raised active:scale-95 ${
+                        selected?.id === e.id ? 'bg-acid/20 ring-2 ring-acid' : ''
                       }`}
                     >
                       <EmojiImage emoji={e} compact className="size-9" />

@@ -1,42 +1,36 @@
 # LARPMOJI
 
-Discover, create and share unconventional internet-native emojis.
-React + TypeScript + Vite + Tailwind CSS v4 + Lucide.
+**Cursed emojis. Tap to copy.**
+Tap any emoji → it's copied as an image → paste it into WhatsApp, Discord, iMessage, Instagram, Slack…
 
-## Run it
+Live: https://amazingappppsss.github.io/larpmoji/
 
-```bash
-npm install
-npm run dev      # http://localhost:5173
-npm run build    # production build in dist/
-```
+## What's inside
+- **Feed**: ~70 hand-tuned cursed emojis (big eyes, real eyes, deep fried, melted, mashups, captioned reactions),
+  plus an **endless feed** that generates brand-new cursed emojis as you scroll.
+- **Tap = copy**: copies the real PNG image (falls back to download if the browser can't).
+- **The Kitchen**: pick any emoji or upload a pic → big eyes, swap eyes/mouth, deep fry, melt, swirl,
+  stretch, pixelate, colour, stickers, meme caption, or hit 🎲 **CURSIFY**.
+- **Stash**: favourites + your own cooks (saved on your device).
+- **Keyboard** (`K`): compact picker with search, recently used and favourites.
+- Group-chat preview that shows what you've sent.
 
-## Features
-- **Explore**: hero, categories, sort (trending / newest / A–Z), random pick
-- **Search**: name, tags, shortcode, category, description, author (press `/`)
-- **Detail modal**: copy image, copy `:shortcode:`, download PNG/SVG, favourite, remix
-- **Favourites + My creations**: saved in `localStorage`
-- **Creator**: upload / drag-drop / paste an image, crop shape, zoom, rotate, drag to pan, background, caption
-- **LARPMOJI Keyboard** (`K` or the *Open Keyboard* button): compact grid, search,
-  Recently used, Favourites, category tabs, arrow-key navigation. Tapping an emoji
-  copies the **actual PNG image** to the clipboard; if the browser can't, it downloads the file instead.
+Emojis are drawn with the visitor's own device emoji font, so they look native on every phone.
 
-## Project structure
-```
-public/emojis/            raw emoji image files (served untouched)
-src/data/assetEmojis.ts   registry for file-based emojis  <- add new image emojis here
-src/data/emojis.ts        central dataset + categories (generated SVG mocks)
-src/data/emojiArt.ts      procedural SVG emoji generator for mock data
-src/lib/emojiActions.ts   copy-to-clipboard / download logic
-src/lib/search.ts         search + sort
-src/store/                app state (favourites, recents, creations, toasts)
-src/components/keyboard/  reusable <EmojiKeyboard> + app-wired <KeyboardDock>
-src/components/pages/     Explore, Favourites, Creator
-```
+## How it works
+`src/lib/cursed.ts` is the cursed engine. It renders emoji glyphs onto a canvas, then applies warps
+(bulge, swirl, melt, wave), deep-fry, pixelate, hue and captions. The library lives in `src/data/emojis.ts`.
 
 ## Adding an image emoji
-1. Put the file in `public/emojis/` (PNG with transparency is best), e.g. `public/emojis/crying-laughing.png`.
-2. Add an entry to `ASSET_SEEDS` in `src/data/assetEmojis.ts`.
+1. Upload the file to `public/emojis/` (you can do this on github.com: Add file → Upload files).
+2. Register it in `src/data/assetEmojis.ts` (`crying-laughing.png` is already registered).
+File-based emojis are hidden until their file exists, and are copied/downloaded with their original pixels.
 
-Files are never resized or redrawn. Copy and download use the original file.
-If a registered file is missing, the app shows a "missing file" tile rather than a substitute.
+## Deploy
+Every push to `main` builds and publishes to GitHub Pages automatically (`.github/workflows/deploy.yml`).
+
+## Develop locally (optional)
+```bash
+npm install
+npm run dev
+```

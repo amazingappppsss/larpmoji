@@ -1,4 +1,5 @@
 import type { Emoji } from '../types'
+import { renderCursed } from './cursed'
 
 /** Load any image src (SVG, PNG data URL or file URL) into an HTMLImageElement. */
 export function loadImage(src: string): Promise<HTMLImageElement> {
@@ -40,6 +41,10 @@ async function rasterise(src: string, maxSide: number): Promise<Blob> {
  * - Generated SVG art is rasterised at `svgSize`.
  */
 export async function emojiToPngBlob(emoji: Emoji, svgSize = 512): Promise<Blob> {
+  if (emoji.recipe && !emoji.src) {
+    const img = emoji.recipe.image ? await loadImage(emoji.recipe.image) : null
+    return canvasToPng(renderCursed(emoji.recipe, svgSize, img))
+  }
   if (emoji.svg) return rasterise(emoji.src, svgSize)
   const res = await fetch(emoji.src)
   if (!res.ok) throw new Error(`Emoji file missing (${res.status})`)
@@ -71,7 +76,7 @@ function downloadBlob(blob: Blob, filename: string) {
 
 export async function downloadPng(emoji: Emoji, size = 512) {
   const blob = await emojiToPngBlob(emoji, size)
-  downloadBlob(blob, emoji.svg ? `${emoji.slug}-${size}.png` : `${emoji.slug}.png`)
+  downloadBlob(blob, emoji.svg || emoji.recipe ? `${emoji.slug}-${size}.png` : `${emoji.slug}.png`)
 }
 
 export function downloadSvg(emoji: Emoji) {
@@ -93,7 +98,7 @@ export function canCopyImage(): boolean {
 export async function copyImage(emoji: Emoji) {
   if (!canCopyImage()) throw new Error('Image copy not supported in this browser')
   // Passing a promise (not an awaited blob) keeps Safari's user-gesture requirement happy.
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': emojiToPngBlob(emoji, 256) })])
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': emojiToPngBlob(emoji, 320) })])
 }
 
 export type SendResult = 'copied' | 'downloaded'

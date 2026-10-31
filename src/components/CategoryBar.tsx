@@ -8,11 +8,11 @@ interface Props {
 }
 
 export function CategoryBar({ value, onChange, counts }: Props) {
-  const items = [{ id: 'all' as const, label: 'Everything', color: 'bg-white', glyph: '∞' }, ...CATEGORIES]
+  const items = [{ id: 'all' as const, label: 'All', color: '#f4f4f0', glyph: '🌀' }, ...CATEGORIES]
   return (
-    <div className="-mx-4 px-4 overflow-x-auto no-scrollbar">
-      <div className="flex gap-2.5 py-2 w-max" role="tablist" aria-label="Categories">
-        {items.map((c, i) => {
+    <div className="-mx-3 sm:-mx-5 px-3 sm:px-5 overflow-x-auto no-scrollbar">
+      <div className="flex gap-2 py-2 w-max" role="tablist" aria-label="Categories">
+        {items.map((c) => {
           const active = value === c.id
           return (
             <button
@@ -20,13 +20,12 @@ export function CategoryBar({ value, onChange, counts }: Props) {
               role="tab"
               aria-selected={active}
               onClick={() => onChange(c.id)}
-              className={`flex items-center gap-2 rounded-full px-4 py-2 font-extrabold text-sm whitespace-nowrap sticker-sm press ${
-                active ? `${c.color} ${i % 2 ? 'rotate-2' : '-rotate-2'} scale-105` : 'bg-white/80'
-              }`}
+              style={active ? { background: c.color, borderColor: c.color } : undefined}
+              className={`btn h-10 px-4 text-sm border whitespace-nowrap ${active ? 'text-black' : 'border-line bg-surface text-fg/85 hover:border-fg/40'}`}
             >
-              <span aria-hidden className="text-base leading-none">{c.glyph}</span>
+              <span aria-hidden className="text-lg leading-none">{c.glyph}</span>
               {c.label}
-              <span className="font-mono text-[11px] opacity-60">{counts[c.id] ?? 0}</span>
+              <span className={`text-[11px] ${active ? 'text-black/60' : 'text-muted'}`}>{counts[c.id] ?? 0}</span>
             </button>
           )
         })}
