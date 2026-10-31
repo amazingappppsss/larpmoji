@@ -7,12 +7,13 @@ const NAV: { id: Route; label: string; glyph: string }[] = [
   { id: 'explore', label: 'Feed', glyph: '🔥' },
   { id: 'create', label: 'Cook', glyph: '🧪' },
   { id: 'favourites', label: 'Stash', glyph: '💾' },
+  { id: 'stickers', label: 'Packs', glyph: '📦' },
 ]
 
 const LOGO = EMOJIS.find((e) => e.id === 'lm-crying-laughing-awake')!
 
 export function Header() {
-  const { route, navigate, favourites, setKeyboardOpen } = useStore()
+  const { route, navigate, favourites, setKeyboardOpen, pack } = useStore()
   return (
     <header className="sticky top-0 z-30 bg-bg/85 backdrop-blur-md border-b border-line">
       <div className="mx-auto max-w-7xl px-3 sm:px-5 h-16 flex items-center gap-2">
@@ -31,12 +32,15 @@ export function Header() {
                 key={id}
                 onClick={() => navigate(id)}
                 aria-current={active ? 'page' : undefined}
-                className={`btn relative px-3 sm:px-4 h-9 text-sm ${active ? 'bg-acid text-black' : 'text-fg/80 hover:text-fg hover:bg-raised'}`}
+                className={`btn relative px-2.5 sm:px-4 h-9 text-sm ${active ? 'bg-acid text-black' : 'text-fg/80 hover:text-fg hover:bg-raised'}`}
               >
                 <span aria-hidden>{glyph}</span>
                 <span className="hidden sm:inline">{label}</span>
                 {id === 'favourites' && favourites.length > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 grid place-items-center rounded-full bg-hot text-white text-[10px]">{favourites.length}</span>
+                )}
+                {id === 'stickers' && pack.ids.length > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 grid place-items-center rounded-full bg-cyan text-black text-[10px]">{pack.ids.length}</span>
                 )}
               </button>
             )

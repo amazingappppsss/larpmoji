@@ -6,12 +6,14 @@ import { KeyboardDock } from './components/keyboard/KeyboardDock'
 import { Explore } from './components/pages/Explore'
 import { Favourites } from './components/pages/Favourites'
 import { Creator } from './components/pages/Creator'
+import { Stickers } from './components/pages/Stickers'
 import { AppStoreProvider, useStore } from './store/AppStore'
 
 function Routes() {
   const { route } = useStore()
   if (route === 'favourites') return <Favourites />
   if (route === 'create') return <Creator />
+  if (route === 'stickers') return <Stickers />
   return <Explore />
 }
 

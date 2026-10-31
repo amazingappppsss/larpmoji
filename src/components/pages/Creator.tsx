@@ -201,6 +201,8 @@ export function Creator() {
       uses: 0,
       createdAt: new Date().toISOString(),
       src: renderCursed(recipe, size, base.kind === 'image' ? img : null).toDataURL('image/png'),
+      // keep the recipe for emoji bases so sticker exports can re-render crisply at 512px
+      ...(base.kind === 'emoji' ? { recipe } : {}),
       custom: true,
     }
   }

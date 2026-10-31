@@ -6,7 +6,7 @@ import { EmojiGrid, EmptyState } from '../EmojiGrid'
 import { SearchBar } from '../SearchBar'
 
 export function Favourites() {
-  const { resolveEmoji, favourites, navigate, customEmojis } = useStore()
+  const { resolveEmoji, favourites, navigate, customEmojis, updatePack, pack } = useStore()
   const [query, setQuery] = useState('')
   const [tab, setTab] = useState<'faves' | 'lab'>('faves')
 
@@ -34,6 +34,17 @@ export function Favourites() {
             </button>
           ))}
         </div>
+        {source.length > 0 && (
+          <button
+            onClick={() => {
+              updatePack({ ids: [...new Set([...pack.ids, ...source.map((e) => e.id)])].slice(0, 120) })
+              navigate('stickers')
+            }}
+            className="btn h-10 px-4 bg-cyan text-black text-sm"
+          >
+            📦 Make a sticker pack
+          </button>
+        )}
         <div className="flex-1 min-w-[200px] max-w-sm">
           <SearchBar value={query} onChange={setQuery} size="sm" placeholder="search your stash…" />
         </div>

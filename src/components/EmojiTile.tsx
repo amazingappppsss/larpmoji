@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Heart, MoreHorizontal } from 'lucide-react'
+import { Heart, MoreHorizontal, Package } from 'lucide-react'
 import type { Emoji } from '../types'
 import { useStore } from '../store/AppStore'
 import { useEmojiActions } from '../store/useEmojiActions'
@@ -7,7 +7,7 @@ import { EmojiImage } from './EmojiImage'
 
 /** One emoji in a grid. Tap = copy image. ⋯ = details. */
 export function EmojiTile({ emoji, index = 0 }: { emoji: Emoji; index?: number }) {
-  const { setOpenEmoji, isFavourite, toggleFavourite } = useStore()
+  const { setOpenEmoji, isFavourite, toggleFavourite, togglePack, inPack } = useStore()
   const { send } = useEmojiActions()
   const [stamp, setStamp] = useState(0)
   const fav = isFavourite(emoji.id)
@@ -43,6 +43,15 @@ export function EmojiTile({ emoji, index = 0 }: { emoji: Emoji; index?: number }
           aria-pressed={fav}
         >
           <Heart className={`size-3.5 ${fav ? 'fill-white' : ''}`} />
+        </button>
+        <button
+          onClick={() => togglePack(emoji)}
+          className={`btn hidden sm:inline-flex size-8 border ${inPack(emoji.id) ? 'bg-cyan border-cyan text-black' : 'bg-bg/80 border-line'}`}
+          aria-label={inPack(emoji.id) ? `Remove ${emoji.name} from sticker pack` : `Add ${emoji.name} to sticker pack`}
+          aria-pressed={inPack(emoji.id)}
+          title="Sticker pack"
+        >
+          <Package className="size-3.5" />
         </button>
         <button onClick={() => setOpenEmoji(emoji)} className="btn size-7 sm:size-8 text-muted sm:text-fg sm:bg-bg/80 sm:border sm:border-line" aria-label={`Details for ${emoji.name}`}>
           <MoreHorizontal className="size-4" />

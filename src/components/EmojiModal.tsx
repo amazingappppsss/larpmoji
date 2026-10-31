@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Copy, Download, FlaskConical, Hash, Heart, Trash2, X } from 'lucide-react'
+import { Copy, Download, FlaskConical, Hash, Heart, Package, Trash2, X } from 'lucide-react'
 import { getCategory } from '../data/emojis'
 import { formatCount } from '../lib/search'
 import { useStore } from '../store/AppStore'
@@ -7,7 +7,7 @@ import { useEmojiActions } from '../store/useEmojiActions'
 import { EmojiImage } from './EmojiImage'
 
 export function EmojiModal() {
-  const { openEmoji: emoji, setOpenEmoji, isFavourite, toggleFavourite, allEmojis, startRemix, removeCustom, toast } = useStore()
+  const { openEmoji: emoji, setOpenEmoji, isFavourite, toggleFavourite, allEmojis, startRemix, removeCustom, toast, togglePack, inPack } = useStore()
   const { send, copyCode, download } = useEmojiActions()
   const closeRef = useRef<HTMLButtonElement>(null)
 
@@ -76,6 +76,9 @@ export function EmojiModal() {
               </button>
               <button onClick={() => toggleFavourite(emoji)} aria-pressed={fav} className={`btn h-11 text-sm ${fav ? 'bg-hot text-white' : 'bg-raised hover:bg-line'}`}>
                 <Heart className={`size-4 ${fav ? 'fill-white' : ''}`} /> {fav ? 'Stashed' : 'Stash'}
+              </button>
+              <button onClick={() => togglePack(emoji)} aria-pressed={inPack(emoji.id)} className={`btn col-span-2 h-11 text-sm ${inPack(emoji.id) ? 'bg-cyan text-black' : 'bg-raised hover:bg-line'}`}>
+                <Package className="size-4" /> {inPack(emoji.id) ? 'In your sticker pack ✓' : 'Add to sticker pack'}
               </button>
               <button onClick={() => startRemix(emoji)} className="btn col-span-2 h-11 bg-raised hover:bg-line text-sm">
                 <FlaskConical className="size-4" /> Cook a remix of this

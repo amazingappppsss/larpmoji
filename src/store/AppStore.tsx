@@ -3,7 +3,8 @@ import type { Emoji } from '../types'
 import { EMOJIS, generatedEmoji } from '../data/emojis'
 import { useLocalStorage } from './useLocalStorage'
 
-export type Route = 'explore' | 'favourites' | 'create'
+export type Route = 'explore' | 'favourites' | 'create' | 'stickers'
+export interface StickerPack { name: string; author: string; outline: boolean; ids: string[] }
 export type RemixPayload = { recipe?: Emoji['recipe']; src?: string; name?: string }
 export type ToastTone = 'success' | 'error' | 'info'
 export interface Toast {
@@ -29,6 +30,10 @@ interface Store {
   toggleFavourite: (e: Emoji) => void
   recent: string[]
   pushRecent: (id: string) => void
+  pack: StickerPack
+  updatePack: (patch: Partial<StickerPack>) => void
+  togglePack: (e: Emoji) => void
+  inPack: (id: string) => boolean
   openEmoji: Emoji | null
   setOpenEmoji: (e: Emoji | null) => void
   keyboardOpen: boolean
@@ -45,7 +50,7 @@ const Ctx = createContext<Store | null>(null)
 
 const readRoute = (): Route => {
   const h = window.location.hash.replace(/^#\/?/, '')
-  return h === 'favourites' || h === 'create' ? h : 'explore'
+  return h === 'favourites' || h === 'create' || h === 'stickers' ? h : 'explore'
 }
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
@@ -70,6 +75,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [favourites, setFavourites] = useLocalStorage<string[]>('larpmoji:favourites', [], onStorageError)
   const [customEmojis, setCustomEmojis] = useLocalStorage<Emoji[]>('larpmoji:custom', [], onStorageError)
   const [recent, setRecent] = useLocalStorage<string[]>('larpmoji:recent', [], onStorageError)
+  const [pack, setPack] = useLocalStorage<StickerPack>('larpmoji:pack', { name: 'My Cursed Pack', author: '', outline: true, ids: [] }, onStorageError)
+  const packSet = useMemo(() => new Set(pack.ids), [pack.ids])
   const [openEmoji, setOpenEmoji] = useState<Emoji | null>(null)
   const [keyboardOpen, setKeyboardOpen] = useState(false)
   const [remix, setRemix] = useState<RemixPayload | null>(null)
@@ -118,6 +125,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     removeCustom: (id) => {
       setCustomEmojis((list) => list.filter((e) => e.id !== id))
       setFavourites((f) => f.filter((x) => x !== id))
+      setPack((p) => ({ ...p, ids: p.ids.filter((x) => x !== id) }))
       setRecent((r) => r.filter((x) => x !== id))
     },
     favourites,
@@ -127,6 +135,15 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       setFavourites((f) => (had ? f.filter((x) => x !== e.id) : [e.id, ...f]))
       toast(had ? `Removed ${e.name} from your stash` : `${e.name} saved to your stash`, 'info', e)
     },
+    pack,
+    updatePack: (patch) => setPack((p) => ({ ...p, ...patch })),
+    togglePack: (e) => {
+      const had = packSet.has(e.id)
+      if (!had && pack.ids.length >= 120) return toast('Packs max out at 120 stickers.', 'error')
+      setPack((p) => ({ ...p, ids: had ? p.ids.filter((x) => x !== e.id) : [...p.ids, e.id] }))
+      toast(had ? `Removed from sticker pack` : `Added to sticker pack (${pack.ids.length + 1})`, 'info', e)
+    },
+    inPack: (id) => packSet.has(id),
     recent,
     pushRecent: (id) => setRecent((r) => [id, ...r.filter((x) => x !== id)].slice(0, MAX_RECENT)),
     openEmoji,
