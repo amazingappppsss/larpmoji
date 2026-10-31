@@ -1,11 +1,16 @@
 # LARPMOJI
 
-**Cursed emojis. Tap to copy.**
-Tap any emoji → it's copied as an image → paste it into WhatsApp, Discord, iMessage, Instagram, Slack…
+**Cute emojis, tap to copy ♡**
+Premium kawaii emojis, kaomoji and sticker packs. Tap → copied → paste into WhatsApp, iMessage, Discord, anywhere.
 
 Live: https://amazingappppsss.github.io/larpmoji/
 
 ## What's inside
+- **✨ Cute**: ~50 original premium kawaii emojis (mochi, bunnies, kitties, bears, frogs, clouds…) drawn by
+  `src/lib/cute.ts`, plus an endless feed of one-of-one cuties. Copy as image or turn into stickers.
+- **♡ Text**: ~80 kaomoji, emoji combos and aesthetic symbols that copy as **real text**, so they paste
+  inline like normal keyboard emojis (`src/data/textEmojis.ts`).
+- **💀 Cursed**: the original cursed collection, below.
 - **Feed**: ~70 hand-tuned cursed emojis (big eyes, real eyes, deep fried, melted, mashups, captioned reactions),
   plus an **endless feed** that generates brand-new cursed emojis as you scroll.
 - **Tap = copy**: copies the real PNG image (falls back to download if the browser can't).

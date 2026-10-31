@@ -251,10 +251,10 @@ export function Creator() {
           </div>
 
           <div className="mt-3 grid grid-cols-4 gap-2">
-            <button onClick={() => setC(randomControls())} className="btn col-span-2 h-14 bg-cyan text-black text-lg hover:brightness-110">
+            <button onClick={() => setC(randomControls())} className="btn col-span-2 h-14 bg-cyan text-ink text-lg hover:brightness-110">
               <Dices className="size-5" /> CURSIFY
             </button>
-            <button onClick={copy} className="btn col-span-2 h-14 bg-acid text-black text-lg hover:brightness-110">
+            <button onClick={copy} className="btn col-span-2 h-14 bg-acid text-ink text-lg hover:brightness-110">
               <Copy className="size-5" /> COPY
             </button>
             <button onClick={save} className="btn col-span-2 h-11 bg-raised hover:bg-line text-sm">
@@ -301,7 +301,7 @@ export function Creator() {
               }}
             >
               <input value={customChar} onChange={(e) => setCustomChar(e.target.value.slice(0, 8))} placeholder="…or type / paste ANY emoji" className="flex-1 min-w-0 h-10 rounded-full bg-raised border border-line focus:border-acid outline-none px-4 text-sm" />
-              <button className="btn h-10 px-4 bg-fg text-black text-sm">Use</button>
+              <button className="btn h-10 px-4 bg-fg text-white text-sm">Use</button>
             </form>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => (handleFile(e.target.files?.[0]), (e.target.value = ''))} />
           </Panel>
@@ -353,8 +353,8 @@ export function Creator() {
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-3xl bg-surface border border-line p-4">
-      <h2 className="font-display uppercase text-xl tracking-wide mb-2">{title}</h2>
+    <section className="rounded-3xl bg-white/90 shadow-softer p-4">
+      <h2 className="font-display font-bold text-lg mb-2">{title}</h2>
       {children}
     </section>
   )
@@ -374,7 +374,7 @@ function ChipRow({ label, options, value, onChange }: { label: string; options: 
     <div className="flex items-center gap-2 py-1.5">
       <span className="text-sm w-[7.5rem] shrink-0">{label}</span>
       <div className="flex flex-wrap gap-1">
-        <button onClick={() => onChange('')} className={`h-9 px-2.5 rounded-xl text-xs ${!value ? 'bg-fg text-black' : 'bg-raised hover:bg-line'}`}>
+        <button onClick={() => onChange('')} className={`h-9 px-2.5 rounded-xl text-xs ${!value ? 'bg-fg text-white' : 'bg-raised hover:bg-line'}`}>
           none
         </button>
         {options.map((o) => (

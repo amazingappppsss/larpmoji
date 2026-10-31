@@ -12,7 +12,8 @@ export function useEmojiActions() {
       try {
         const result = await sendEmoji(e)
         pushRecent(e.id)
-        if (result === 'copied') toast(`Copied! Now paste it in any chat`, 'success', e)
+        if (result === 'text') toast(`Copied ${e.text} · pastes like a normal emoji ♡`, 'success')
+        else if (result === 'copied') toast(`Copied! Paste it in any chat ♡`, 'success', e)
         else toast(`Your browser can't copy images, so it was downloaded instead`, 'info', e)
       } catch (err) {
         toast(err instanceof Error ? err.message : 'Could not copy that emoji', 'error')

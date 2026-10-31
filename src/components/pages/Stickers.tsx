@@ -84,26 +84,26 @@ export function Stickers() {
       <h1 className="meme text-6xl sm:text-7xl leading-none">
         sticker <span className="text-cyan">packs</span> 📦
       </h1>
-      <p className="mt-2 text-sm text-muted max-w-xl">Turn your cursed emojis into real stickers for WhatsApp, Telegram and Discord. Build the pack, then pick where it goes.</p>
+      <p className="mt-2 text-sm text-muted max-w-xl">Turn your favourite cuties into real stickers for WhatsApp, Telegram and Discord. Build the pack, then pick where it goes ♡</p>
 
       {/* ---------------- PACK BUILDER */}
-      <section className="mt-6 rounded-[2rem] bg-surface border border-line p-4 sm:p-6">
+      <section className="mt-6 rounded-[2rem] bg-white/90 shadow-soft p-4 sm:p-6">
         <div className="flex flex-wrap items-end gap-3">
           <label className="grid gap-1 flex-1 min-w-[180px]">
-            <span className="text-xs uppercase tracking-widest text-muted">Pack name</span>
+            <span className="text-xs font-black text-muted">Pack name</span>
             <input value={pack.name} onChange={(e) => updatePack({ name: e.target.value.slice(0, 64) })} className="h-11 rounded-full bg-raised border border-line focus:border-acid outline-none px-4" />
           </label>
           <label className="grid gap-1 flex-1 min-w-[140px]">
-            <span className="text-xs uppercase tracking-widest text-muted">Made by</span>
+            <span className="text-xs font-black text-muted">Made by</span>
             <input value={pack.author} placeholder="your name" onChange={(e) => updatePack({ author: e.target.value.slice(0, 64) })} className="h-11 rounded-full bg-raised border border-line focus:border-acid outline-none px-4" />
           </label>
-          <button onClick={() => updatePack({ outline: !pack.outline })} aria-pressed={pack.outline} className={`btn h-11 px-4 text-sm border ${pack.outline ? 'bg-fg text-black border-fg' : 'bg-raised border-line'}`}>
+          <button onClick={() => updatePack({ outline: !pack.outline })} aria-pressed={pack.outline} className={`btn h-11 px-4 text-sm border ${pack.outline ? 'bg-fg text-white border-fg' : 'bg-raised border-line'}`}>
             {pack.outline ? <Check className="size-4" /> : <span className="size-4" />} White sticker border
           </button>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
-          <span className="meme text-2xl">{stickers.length} stickers</span>
+          <span className="meme text-2xl">{stickers.length} sticker{stickers.length === 1 ? '' : 's'}</span>
           <span className={`rounded-full px-2.5 py-0.5 text-xs ${waOk ? 'bg-[#25D366]/20 text-[#25D366]' : 'bg-raised text-muted'}`}>
             WhatsApp {waOk ? '✓ ready' : stickers.length < WA_MIN ? `needs ${WA_MIN - stickers.length} more` : `max ${WA_MAX} — first ${WA_MAX} used`}
           </span>
@@ -117,19 +117,19 @@ export function Stickers() {
         </div>
 
         {/* sticker wall — chat-wallpaper vibe */}
-        <div className="mt-3 rounded-3xl p-3 bg-[#0b141a] bg-[radial-gradient(#ffffff0d_1px,transparent_1px)] [background-size:14px_14px]">
+        <div className="mt-3 rounded-3xl p-3 bg-[#fdf0f7] bg-[radial-gradient(#e9cfe8_1px,transparent_1px)] [background-size:14px_14px]">
           {stickers.length === 0 ? (
             <div className="py-10 text-center">
               <div className="text-5xl mb-2" aria-hidden>📦</div>
               <p className="text-sm text-muted mb-4">Your pack is empty. Add some cursed stuff:</p>
               <div className="flex flex-wrap justify-center gap-2">
                 {stash.length > 0 && (
-                  <button onClick={() => addMany(stash.slice(0, WA_MAX))} className="btn h-11 px-4 bg-acid text-black text-sm">
+                  <button onClick={() => addMany(stash.slice(0, WA_MAX))} className="btn h-11 px-4 bg-acid text-ink text-sm">
                     <Plus className="size-4" /> Add my stash ({stash.length})
                   </button>
                 )}
-                <button onClick={() => addMany([...allEmojis].filter((e) => !e.custom).sort((a, b) => b.uses - a.uses).slice(0, 12))} className="btn h-11 px-4 bg-cyan text-black text-sm">
-                  <Shuffle className="size-4" /> Starter pack (top 12)
+                <button onClick={() => addMany([...allEmojis].filter((e) => e.id.startsWith('cute-')).sort((a, b) => b.uses - a.uses).slice(0, 12))} className="btn h-11 px-4 bg-cyan text-ink text-sm">
+                  <Shuffle className="size-4" /> Cute starter pack (12)
                 </button>
                 <button onClick={() => setPicker(true)} className="btn h-11 px-4 bg-raised border border-line text-sm">
                   <Plus className="size-4" /> Pick stickers
@@ -144,7 +144,7 @@ export function Stickers() {
                     onClick={() =>
                       shareSticker(e, pack.outline).then((r) => r === 'downloaded' && toast('Sticker downloaded. Send it in any chat!', 'success', e))
                     }
-                    className="block w-full aspect-square rounded-2xl hover:bg-white/5 p-1"
+                    className="block w-full aspect-square rounded-2xl hover:bg-white/70 p-1"
                     title={`${e.name} — tap to send just this one`}
                     aria-label={`Send ${e.name} as a sticker`}
                   >
@@ -156,7 +156,7 @@ export function Stickers() {
                   </button>
                 </div>
               ))}
-              <button onClick={() => setPicker(true)} className="aspect-square rounded-2xl border-2 border-dashed border-white/15 hover:border-acid hover:text-acid grid place-items-center text-muted" aria-label="Add stickers">
+              <button onClick={() => setPicker(true)} className="aspect-square rounded-2xl border-2 border-dashed border-fg/15 hover:border-acid hover:text-acid grid place-items-center text-muted" aria-label="Add stickers">
                 <Plus className="size-7" />
               </button>
             </div>
@@ -168,7 +168,7 @@ export function Stickers() {
 
       {busy && (
         <div className="fixed z-[60] inset-x-0 bottom-6 flex justify-center pointer-events-none">
-          <div className="flex items-center gap-3 rounded-full bg-fg text-black px-5 py-3 font-extrabold shadow-2xl animate-pop">
+          <div className="flex items-center gap-3 rounded-full bg-fg text-white px-5 py-3 font-extrabold shadow-2xl animate-pop">
             <Loader2 className="size-5 animate-spin" /> {busy.what} {busy.done}/{busy.total}
           </div>
         </div>
@@ -252,7 +252,7 @@ function Picker({ onClose }: { onClose: () => void }) {
               ['library', '🔥 All emojis'],
             ] as const
           ).map(([id, label]) => (
-            <button key={id} onClick={() => setTab(id)} className={`btn h-8 px-3 text-xs ${tab === id ? 'bg-fg text-black' : ''}`}>
+            <button key={id} onClick={() => setTab(id)} className={`btn h-8 px-3 text-xs ${tab === id ? 'bg-fg text-white' : ''}`}>
               {label}
             </button>
           ))}
@@ -260,7 +260,7 @@ function Picker({ onClose }: { onClose: () => void }) {
         <div className="flex-1 min-w-[160px]">
           <SearchBar value={query} onChange={setQuery} size="sm" placeholder="search…" />
         </div>
-        <button onClick={onClose} className="btn h-10 px-4 bg-acid text-black text-sm">
+        <button onClick={onClose} className="btn h-10 px-4 bg-acid text-ink text-sm">
           Done
         </button>
       </div>
@@ -271,7 +271,7 @@ function Picker({ onClose }: { onClose: () => void }) {
           return (
             <button key={e.id} onClick={() => togglePack(e)} aria-pressed={on} title={e.name} className={`relative aspect-square rounded-2xl grid place-items-center ${on ? 'bg-acid/20 ring-2 ring-acid' : 'bg-surface hover:bg-line'}`}>
               <EmojiImage emoji={e} compact className="size-11" />
-              <span className={`absolute top-1 right-1 grid place-items-center size-5 rounded-full text-[10px] ${on ? 'bg-acid text-black' : 'bg-bg/80 text-muted'}`}>{on ? <Check className="size-3" /> : <Plus className="size-3" />}</span>
+              <span className={`absolute top-1 right-1 grid place-items-center size-5 rounded-full text-[10px] ${on ? 'bg-acid text-ink' : 'bg-bg/80 text-muted'}`}>{on ? <Check className="size-3" /> : <Plus className="size-3" />}</span>
             </button>
           )
         })}
@@ -283,10 +283,10 @@ function Picker({ onClose }: { onClose: () => void }) {
 /* ---------------- platform cards */
 function Card({ color, logo, title, children }: { color: string; logo: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-[2rem] bg-surface border border-line overflow-hidden">
+    <section className="rounded-[2rem] bg-white shadow-soft overflow-hidden">
       <div className="flex items-center gap-3 px-5 py-4" style={{ background: `${color}22`, borderBottom: `1px solid ${color}44` }}>
         <span className="grid place-items-center size-10 rounded-2xl text-xl" style={{ background: color }}>{logo}</span>
-        <h3 className="font-display uppercase text-2xl tracking-wide">{title}</h3>
+        <h3 className="font-display font-bold text-xl">{title}</h3>
       </div>
       <div className="p-5 text-sm">{children}</div>
     </section>
@@ -326,7 +326,7 @@ function WhatsAppCard({ disabled, count, webp, onPack, onIphone }: { disabled: b
             ['iphone', '🍎 iPhone'],
           ] as const
         ).map(([id, label]) => (
-          <button key={id} onClick={() => setOs(id)} className={`btn flex-1 h-8 text-xs ${os === id ? 'bg-[#25D366] text-black' : ''}`}>
+          <button key={id} onClick={() => setOs(id)} className={`btn flex-1 h-8 text-xs ${os === id ? 'bg-[#25D366] text-ink' : ''}`}>
             {label}
           </button>
         ))}
@@ -334,7 +334,7 @@ function WhatsAppCard({ disabled, count, webp, onPack, onIphone }: { disabled: b
       {os === 'android' ? (
         <ol className="flex flex-col gap-3">
           <Step n={1}>
-            <button onClick={onPack} disabled={disabled || webp === false} className="btn w-full h-12 bg-[#25D366] text-black disabled:opacity-40">
+            <button onClick={onPack} disabled={disabled || webp === false} className="btn w-full h-12 bg-[#25D366] text-ink disabled:opacity-40">
               <Download className="size-4" /> Download pack (.wastickers)
             </button>
             {count < WA_MIN && <p className="text-xs text-muted mt-1">WhatsApp needs {WA_MIN}–{WA_MAX} stickers.</p>}
@@ -352,7 +352,7 @@ function WhatsAppCard({ disabled, count, webp, onPack, onIphone }: { disabled: b
       ) : (
         <ol className="flex flex-col gap-3">
           <Step n={1}>
-            <button onClick={onIphone} disabled={disabled} className="btn w-full h-12 bg-[#25D366] text-black disabled:opacity-40">
+            <button onClick={onIphone} disabled={disabled} className="btn w-full h-12 bg-[#25D366] text-ink disabled:opacity-40">
               <Share2 className="size-4" /> Save stickers to Photos
             </button>
             <p className="text-xs text-muted mt-1">In the share sheet, tap “Save Images”.</p>
@@ -375,7 +375,7 @@ function TelegramCard({ stickers, packName, disabled, onZip }: { stickers: Emoji
     <Card color="#2AABEE" logo="✈️" title="Telegram">
       <ol className="flex flex-col gap-3">
         <Step n={1}>
-          <button onClick={onZip} disabled={disabled} className="btn w-full h-12 bg-[#2AABEE] text-black disabled:opacity-40">
+          <button onClick={onZip} disabled={disabled} className="btn w-full h-12 bg-[#2AABEE] text-ink disabled:opacity-40">
             <Download className="size-4" /> Download sticker files
           </button>
           <p className="text-xs text-muted mt-1">512px PNGs, Telegram-ready. Unzip on your phone (Files app does it).</p>

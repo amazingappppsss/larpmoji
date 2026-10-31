@@ -29,7 +29,7 @@ export function Favourites() {
               ['lab', `🧪 My cooks (${customEmojis.length})`],
             ] as const
           ).map(([id, label]) => (
-            <button key={id} role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`btn h-9 px-4 text-sm ${tab === id ? 'bg-fg text-black' : 'text-fg/80'}`}>
+            <button key={id} role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`btn h-9 px-4 text-sm ${tab === id ? 'bg-fg text-white' : 'text-fg/80'}`}>
               {label}
             </button>
           ))}
@@ -40,7 +40,7 @@ export function Favourites() {
               updatePack({ ids: [...new Set([...pack.ids, ...source.map((e) => e.id)])].slice(0, 120) })
               navigate('stickers')
             }}
-            className="btn h-10 px-4 bg-cyan text-black text-sm"
+            className="btn h-10 px-4 bg-cyan text-ink text-sm"
           >
             📦 Make a sticker pack
           </button>

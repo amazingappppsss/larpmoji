@@ -35,11 +35,42 @@ interface Props {
  * Renders an emoji at its original aspect ratio (object-contain, never stretched).
  * Missing file-based assets show an explicit placeholder instead of substitute art.
  */
-export function EmojiImage({ emoji, className = '', loading = 'lazy', compact, size = 256 }: Props) {
+export function EmojiImage(props: Props) {
+  if (props.emoji.text) return <TextGlyph text={props.emoji.text} className={props.className} />
+  return <RasterEmoji {...props} />
+}
+
+/** Estimate rendered width (in em) so text emojis fill their tile without overflowing. */
+const seg = typeof Intl !== 'undefined' && 'Segmenter' in Intl ? new Intl.Segmenter() : null
+function fitSize(text: string): number {
+  const parts = seg ? [...seg.segment(text)].map((x) => x.segment) : [...text]
+  let em = 0
+  for (const g of parts) {
+    if (/\p{Extended_Pictographic}/u.test(g)) em += 1.22
+    else if (/\s/.test(g)) em += 0.28
+    else if (/[\u3000-\uffef]/.test(g)) em += 0.8
+    else em += 0.55
+  }
+  return Math.max(9, Math.min(58, 90 / Math.max(em, 0.1)))
+}
+
+/** Text emojis render as real text, auto-sized to fit their box. */
+function TextGlyph({ text, className = '' }: { text: string; className?: string }) {
+  const size = fitSize(text)
+  return (
+    <div className={`grid place-items-center [container-type:size] overflow-hidden ${className}`}>
+      <span className="font-emoji whitespace-nowrap leading-none text-fg select-none" style={{ fontSize: `${size}cqw` }}>
+        {text}
+      </span>
+    </div>
+  )
+}
+
+function RasterEmoji({ emoji, className = '', loading = 'lazy', compact, size = 256 }: Props) {
   const src = useEmojiSrc(emoji, size)
   const [failedSrc, setFailedSrc] = useState<string | null>(null)
 
-  if (!src) return <div className={`animate-pulse rounded-full bg-fg/10 ${className}`} aria-label={emoji.name} />
+  if (!src) return <div className={`animate-pulse rounded-full bg-fg/5 ${className}`} aria-label={emoji.name} />
   if (failedSrc === src) {
     return (
       <div className={`flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-fg/30 text-muted text-center ${className}`} title={`Missing file: ${src}`}>

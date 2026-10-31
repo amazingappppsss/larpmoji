@@ -1,18 +1,37 @@
-import type { Category, Emoji, CategoryId } from '../types'
+import type { Category, Collection, Emoji, CategoryId } from '../types'
 import { ASSET_EMOJIS } from './assetEmojis'
+import { CUTE_LIBRARY } from './cuteEmojis'
+import { TEXT_EMOJIS } from './textEmojis'
 import { bigEyes, bigMouth, eyesOf, mouthOf, randomRecipe, type CursedRecipe } from '../lib/cursed'
 
-export const CATEGORIES: Category[] = [
-  { id: 'cursed', label: 'Cursed', blurb: 'something is wrong with their face', color: '#b6ff00', glyph: '👁️' },
-  { id: 'bigeyes', label: 'Big Eyes', blurb: 'pupils fully dilated', color: '#00e5ff', glyph: '😳' },
-  { id: 'deepfried', label: 'Deep Fried', blurb: 'extra crispy, 400°F', color: '#ff5a00', glyph: '🔥' },
-  { id: 'melted', label: 'Melted', blurb: 'physics has left the chat', color: '#c77dff', glyph: '🫠' },
-  { id: 'mashups', label: 'Mashups', blurb: 'two emojis, one braincell', color: '#ff2e88', glyph: '🧬' },
-  { id: 'reactions', label: 'Reactions', blurb: 'captioned for the group chat', color: '#ffe600', glyph: '💬' },
+export const COLLECTIONS: { id: Collection; label: string; glyph: string; blurb: string }[] = [
+  { id: 'cute', label: 'Cute', glyph: '✨', blurb: 'premium cuties · copy as image or sticker' },
+  { id: 'text', label: 'Text', glyph: '♡', blurb: 'pastes like a real keyboard emoji' },
+  { id: 'cursed', label: 'Cursed', glyph: '💀', blurb: 'for the chaos enjoyers' },
 ]
 
-export const ENDLESS_CATEGORY: Category = { id: 'endless', label: 'Endless', blurb: 'freshly generated, never seen before', color: '#ffffff', glyph: '♾️' }
-export const CUSTOM_CATEGORY: Category = { id: 'custom', label: 'My Cooks', blurb: 'made by you', color: '#b6ff00', glyph: '🧪' }
+export const CATEGORIES: Category[] = [
+  { id: 'love', label: 'Love', blurb: 'crushes, hugs and heart eyes', color: '#ffb5d0', glyph: '💗', collection: 'cute' },
+  { id: 'happy', label: 'Happy', blurb: 'yay energy only', color: '#ffe39a', glyph: '🌼', collection: 'cute' },
+  { id: 'sad', label: 'Sad', blurb: 'teary but adorable', color: '#b8dcff', glyph: '🥺', collection: 'cute' },
+  { id: 'sleepy', label: 'Sleepy', blurb: 'nap o’clock', color: '#d3c2ff', glyph: '🌙', collection: 'cute' },
+  { id: 'sassy', label: 'Sassy', blurb: 'smug, pouty, iconic', color: '#ffc8a8', glyph: '💅', collection: 'cute' },
+  { id: 'critters', label: 'Critters', blurb: 'the whole squishy crew', color: '#b5ecd0', glyph: '🐰', collection: 'cute' },
+  { id: 'kaomoji', label: 'Kaomoji', blurb: 'tiny faces made of text', color: '#ffb5d0', glyph: '૮ ˶ᵔᵕᵔ˶ ა', collection: 'text' },
+  { id: 'combos', label: 'Combos', blurb: 'emoji combos that hit different', color: '#ffe39a', glyph: '🥺👉👈', collection: 'text' },
+  { id: 'aesthetic', label: 'Aesthetic', blurb: 'for bios, captions and usernames', color: '#d3c2ff', glyph: '⋆˙⟡♡', collection: 'text' },
+  { id: 'cursed', label: 'Cursed', blurb: 'something is wrong with their face', color: '#c9f27a', glyph: '👁️', collection: 'cursed' },
+  { id: 'bigeyes', label: 'Big Eyes', blurb: 'pupils fully dilated', color: '#9fe8f5', glyph: '😳', collection: 'cursed' },
+  { id: 'deepfried', label: 'Deep Fried', blurb: 'extra crispy', color: '#ffb37a', glyph: '🔥', collection: 'cursed' },
+  { id: 'melted', label: 'Melted', blurb: 'physics has left the chat', color: '#d9b8ff', glyph: '🫠', collection: 'cursed' },
+  { id: 'mashups', label: 'Mashups', blurb: 'two emojis, one braincell', color: '#ff9fc8', glyph: '🧬', collection: 'cursed' },
+  { id: 'reactions', label: 'Captions', blurb: 'captioned for the group chat', color: '#ffe27a', glyph: '💬', collection: 'cursed' },
+]
+
+export const ENDLESS_CATEGORY: Category = { id: 'endless', label: 'Endless', blurb: 'freshly generated, one of one', color: '#ffffff', glyph: '♾️', collection: 'cute' }
+export const CUSTOM_CATEGORY: Category = { id: 'custom', label: 'My Cooks', blurb: 'made by you', color: '#b5ecd0', glyph: '🧪', collection: 'cursed' }
+
+export const collectionOf = (e: Emoji): Collection => (e.text ? 'text' : e.id.startsWith('cutie-') ? 'cute' : getCategory(e.category).collection)
 
 export function getCategory(id: CategoryId): Category {
   return CATEGORIES.find((c) => c.id === id) ?? (id === 'endless' ? ENDLESS_CATEGORY : CUSTOM_CATEGORY)
@@ -173,4 +192,4 @@ export function generatedEmoji(seed: number): Emoji {
 }
 
 /** Central emoji dataset. Featured file-based assets come first. */
-export const EMOJIS: Emoji[] = [...ASSET_EMOJIS.filter((e) => e.featured), ...ASSET_EMOJIS.filter((e) => !e.featured), ...LIBRARY]
+export const EMOJIS: Emoji[] = [...ASSET_EMOJIS.filter((e) => e.featured), ...ASSET_EMOJIS.filter((e) => !e.featured), ...CUTE_LIBRARY, ...TEXT_EMOJIS, ...LIBRARY]

@@ -101,13 +101,17 @@ export async function copyImage(emoji: Emoji) {
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': emojiToPngBlob(emoji, 320) })])
 }
 
-export type SendResult = 'copied' | 'downloaded'
+export type SendResult = 'copied' | 'downloaded' | 'text'
 
 /**
  * "Send" an emoji: copy the image to the clipboard, or download it if the
  * browser can't put images on the clipboard. Never copies just the name.
  */
 export async function sendEmoji(emoji: Emoji): Promise<SendResult> {
+  if (emoji.text) {
+    await copyText(emoji.text)
+    return 'text'
+  }
   if (canCopyImage()) {
     try {
       await copyImage(emoji)

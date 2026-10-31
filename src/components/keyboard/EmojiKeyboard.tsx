@@ -46,7 +46,7 @@ export function EmojiKeyboard({
   onDownload,
   onToggleFavourite,
   isFavourite,
-  title = 'LARPMOJI keyboard',
+  title = 'larpmoji keyboard',
 }: EmojiKeyboardProps) {
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Emoji | null>(null)
@@ -153,26 +153,26 @@ export function EmojiKeyboard({
   return (
     <>
       {/* backdrop (mobile only – desktop keeps the page usable) */}
-      <div className="fixed inset-0 z-40 bg-black/60 sm:hidden" onClick={onClose} aria-hidden />
+      <div className="fixed inset-0 z-40 bg-fg/20 backdrop-blur-[2px] sm:hidden" onClick={onClose} aria-hidden />
       <div
         ref={panelRef}
         role="dialog"
         aria-label={title}
-        className="fixed z-50 inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[420px] h-[min(78dvh,600px)] flex flex-col bg-surface border border-line rounded-t-[1.75rem] sm:rounded-[1.75rem] shadow-2xl shadow-black animate-rise pb-[env(safe-area-inset-bottom)]"
+        className="fixed z-50 inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[420px] h-[min(78dvh,600px)] flex flex-col bg-white/[0.97] backdrop-blur-xl border border-white rounded-t-[1.75rem] sm:rounded-[1.75rem] shadow-soft animate-rise pb-[env(safe-area-inset-bottom)]"
       >
         {/* title bar */}
         <div className="flex items-center gap-2 px-4 pt-3 pb-2">
-          <span className="grid place-items-center size-8 rounded-lg bg-acid text-black">
+          <span className="grid place-items-center size-8 rounded-lg bg-acid text-ink">
             <Keyboard className="size-4" aria-hidden />
           </span>
-          <h2 className="font-display uppercase text-xl tracking-wide leading-none">{title}</h2>
+          <h2 className="font-display font-bold text-lg leading-none">{title}</h2>
           <button onClick={onClose} className="btn ml-auto size-9 bg-raised hover:bg-line" aria-label="Close keyboard">
             <X className="size-4" />
           </button>
         </div>
 
         {/* selection preview */}
-        <div className="mx-3 mb-2 rounded-2xl bg-raised border border-line p-2.5 flex items-center gap-3 min-h-[92px]">
+        <div className="mx-3 mb-2 rounded-2xl bg-gradient-to-br from-[#fff0f7] to-[#f3eeff] p-2.5 flex items-center gap-3 min-h-[92px]">
           {selected ? (
             <>
               <div className="grid place-items-center size-[72px] shrink-0 rounded-xl checker overflow-hidden">
@@ -182,7 +182,7 @@ export function EmojiKeyboard({
                 <div className="font-extrabold leading-tight truncate">{selected.name}</div>
                 <div className="text-[11px] text-muted truncate">:{selected.slug}:</div>
                 <div className="mt-1.5 flex gap-1.5">
-                  <button onClick={() => onSend(selected)} className="btn h-8 px-3 bg-acid text-black text-xs">
+                  <button onClick={() => onSend(selected)} className="btn h-8 px-3 bg-acid text-ink text-xs">
                     <Copy className="size-3.5" /> Copy
                   </button>
                   <button onClick={() => onDownload(selected)} className="btn size-8 bg-surface border border-line" aria-label={`Download ${selected.name}`}>
@@ -201,7 +201,7 @@ export function EmojiKeyboard({
             </>
           ) : (
             <p className="text-sm text-muted px-1">
-              Tap an emoji → it's <span className="text-acid">copied as an image</span>. Paste it in any chat.
+              Tap to copy ♡ cuties copy as <span className="text-hot">images</span>, kaomoji as <span className="text-hot">real text</span>.
             </p>
           )}
         </div>
@@ -249,6 +249,7 @@ export function EmojiKeyboard({
                     <button
                       key={`${s.id}-${e.id}`}
                       data-emoji-key
+                      style={e.text ? { gridColumn: 'span 2', aspectRatio: 'auto', height: '100%' } : undefined}
                       onClick={() => pick(e)}
                       title={`${e.name} — click to copy`}
                       aria-label={`Copy ${e.name}`}
@@ -256,7 +257,7 @@ export function EmojiKeyboard({
                         selected?.id === e.id ? 'bg-acid/20 ring-2 ring-acid' : ''
                       }`}
                     >
-                      <EmojiImage emoji={e} compact className="size-9" />
+                      <EmojiImage emoji={e} compact className={e.text ? 'w-full h-9 px-1' : 'size-9'} />
                     </button>
                   ))}
                 </div>

@@ -33,29 +33,29 @@ export function EmojiModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm sm:p-6"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-fg/25 backdrop-blur-md sm:p-6"
       onMouseDown={(e) => e.target === e.currentTarget && setOpenEmoji(null)}
       role="dialog"
       aria-modal="true"
       aria-labelledby="emoji-modal-title"
     >
-      <div className="relative w-full sm:max-w-2xl max-h-[94dvh] overflow-y-auto bg-surface border border-line rounded-t-[2rem] sm:rounded-[2rem] animate-rise">
+      <div className="relative w-full sm:max-w-2xl max-h-[94dvh] overflow-y-auto bg-surface shadow-soft rounded-t-[2rem] sm:rounded-[2rem] animate-rise">
         <button ref={closeRef} onClick={() => setOpenEmoji(null)} className="btn absolute top-3 right-3 z-10 size-10 bg-raised hover:bg-line" aria-label="Close">
           <X className="size-5" />
         </button>
 
         <div className="grid sm:grid-cols-2 gap-5 p-5 sm:p-7">
-          <div className={`relative aspect-square rounded-3xl grid place-items-center ${emoji.asset || emoji.custom ? 'checker' : 'bg-raised'}`}>
-            <div className="absolute inset-0 rounded-3xl opacity-25 blur-2xl" style={{ background: `radial-gradient(circle, ${cat.color}, transparent 65%)` }} aria-hidden />
+          <div className={`relative aspect-square rounded-[2rem] grid place-items-center ${emoji.asset || emoji.custom ? 'checker' : 'bg-gradient-to-br from-[#fff0f7] to-[#f1ecff]'}`}>
+            <div className="absolute inset-0 rounded-3xl opacity-50 blur-2xl" style={{ background: `radial-gradient(circle, ${cat.color}, transparent 65%)` }} aria-hidden />
             <EmojiImage emoji={emoji} loading="eager" size={512} className="relative w-[82%] h-[82%] animate-float" />
           </div>
 
           <div className="flex flex-col">
-            <span className="self-start rounded-full px-2.5 py-0.5 text-[11px] font-extrabold uppercase text-black" style={{ background: cat.color }}>
+            <span className="self-start rounded-full px-2.5 py-0.5 text-[11px] font-black text-ink" style={{ background: cat.color }}>
               {cat.glyph} {cat.label}
               {emoji.alsoIn?.map((c) => ` / ${getCategory(c).label}`)}
             </span>
-            <h2 id="emoji-modal-title" className="meme text-4xl sm:text-5xl leading-[0.95] mt-3 pr-10">{emoji.name}</h2>
+            <h2 id="emoji-modal-title" className="meme text-3xl sm:text-4xl leading-[1.05] mt-3 pr-10">{emoji.name}</h2>
             <p className="mt-3 text-sm text-fg/80 leading-relaxed">{emoji.description}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {emoji.tags.slice(0, 6).map((t) => (
@@ -68,21 +68,26 @@ export function EmojiModal() {
             {emoji.uses > 0 && <p className="mt-3 text-xs text-muted">🔥 copied {formatCount(emoji.uses)} times</p>}
 
             <div className="mt-auto pt-5 grid grid-cols-2 gap-2">
-              <button onClick={() => send(emoji)} className="btn col-span-2 h-14 bg-acid text-black text-lg hover:brightness-110">
-                <Copy className="size-5" /> Copy image
+              <button onClick={() => send(emoji)} className="btn col-span-2 h-14 bg-gradient-to-r from-[#ff7ab8] to-[#b98cff] text-white text-lg shadow-pop">
+                <Copy className="size-5" /> {emoji.text ? 'Copy text' : 'Copy'}
               </button>
+              {emoji.text && <p className="col-span-2 -mt-1 text-xs font-semibold text-muted text-center">Pastes as real text, like a keyboard emoji ♡</p>}
+              {!emoji.text && (
               <button onClick={() => download(emoji, 'png')} className="btn h-11 bg-raised hover:bg-line text-sm">
                 <Download className="size-4" /> Download
               </button>
-              <button onClick={() => toggleFavourite(emoji)} aria-pressed={fav} className={`btn h-11 text-sm ${fav ? 'bg-hot text-white' : 'bg-raised hover:bg-line'}`}>
+              )}
+              <button onClick={() => toggleFavourite(emoji)} aria-pressed={fav} className={`btn h-11 text-sm ${emoji.text ? 'col-span-2' : ''} ${fav ? 'bg-hot text-white' : 'bg-raised hover:bg-line'}`}>
                 <Heart className={`size-4 ${fav ? 'fill-white' : ''}`} /> {fav ? 'Stashed' : 'Stash'}
               </button>
-              <button onClick={() => togglePack(emoji)} aria-pressed={inPack(emoji.id)} className={`btn col-span-2 h-11 text-sm ${inPack(emoji.id) ? 'bg-cyan text-black' : 'bg-raised hover:bg-line'}`}>
+              {!emoji.text && (<button onClick={() => togglePack(emoji)} aria-pressed={inPack(emoji.id)} className={`btn col-span-2 h-11 text-sm ${inPack(emoji.id) ? 'bg-cyan text-ink' : 'bg-raised hover:bg-line'}`}>
                 <Package className="size-4" /> {inPack(emoji.id) ? 'In your sticker pack ✓' : 'Add to sticker pack'}
-              </button>
-              <button onClick={() => startRemix(emoji)} className="btn col-span-2 h-11 bg-raised hover:bg-line text-sm">
-                <FlaskConical className="size-4" /> Cook a remix of this
-              </button>
+              </button>)}
+              {!emoji.text && (
+                <button onClick={() => startRemix(emoji)} className="btn col-span-2 h-11 bg-raised hover:bg-line text-sm">
+                  <FlaskConical className="size-4" /> Cook a remix of this
+                </button>
+              )}
               <button onClick={() => copyCode(emoji)} className="col-span-2 text-xs text-muted hover:text-fg">
                 or copy shortcode :{emoji.slug}:
               </button>

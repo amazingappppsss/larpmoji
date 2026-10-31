@@ -28,7 +28,7 @@ export function SearchBar({ value, onChange, placeholder = 'search: crying, skul
 
   const lg = size === 'lg'
   return (
-    <label className={`flex items-center gap-2 rounded-full bg-surface border border-line focus-within:border-acid transition-colors ${lg ? 'px-5 h-14' : 'px-3.5 h-10'}`}>
+    <label className={`flex items-center gap-2 rounded-full bg-white border border-white shadow-softer focus-within:shadow-soft focus-within:border-acid/60 transition-all ${lg ? 'px-5 h-14' : 'px-3.5 h-10'}`}>
       <Search className={`${lg ? 'size-5' : 'size-4'} shrink-0 text-muted`} aria-hidden />
       <span className="sr-only">Search emojis</span>
       <input

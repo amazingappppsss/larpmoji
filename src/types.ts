@@ -1,6 +1,11 @@
 import type { CursedRecipe } from './lib/cursed'
 
-export type CategoryId = 'cursed' | 'bigeyes' | 'deepfried' | 'melted' | 'mashups' | 'reactions' | 'endless' | 'custom'
+export type Collection = 'cute' | 'text' | 'cursed'
+export type CategoryId =
+  | 'love' | 'happy' | 'sad' | 'sleepy' | 'sassy' | 'critters'
+  | 'kaomoji' | 'combos' | 'aesthetic'
+  | 'cursed' | 'bigeyes' | 'deepfried' | 'melted' | 'mashups' | 'reactions'
+  | 'endless' | 'custom'
 
 export interface Category {
   id: CategoryId
@@ -9,6 +14,7 @@ export interface Category {
   /** accent hex colour */
   color: string
   glyph: string
+  collection: Collection
 }
 
 export interface Emoji {
@@ -26,6 +32,8 @@ export interface Emoji {
   src: string
   /** cursed-engine recipe; rendered on demand in the browser */
   recipe?: CursedRecipe
+  /** text emojis: copied as plain text so they paste like keyboard emojis */
+  text?: string
   /** raw SVG markup (generated emojis only) */
   svg?: string
   custom?: boolean

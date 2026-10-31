@@ -1,69 +1,95 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-display: Anton, Impact, 'Arial Narrow Bold', sans-serif;
-  --font-sans: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif;
+  --font-sans: Nunito, ui-rounded, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-emoji: Nunito, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', 'Noto Sans Symbols 2', sans-serif;
 
-  --color-bg: #0a0a0a;
-  --color-surface: #141414;
-  --color-raised: #1c1c1c;
-  --color-line: #2b2b2b;
-  --color-fg: #f4f4f0;
-  --color-muted: #8c8c86;
-  --color-acid: #b6ff00;
-  --color-hot: #ff2e88;
-  --color-cyan: #00e5ff;
-  --color-fire: #ff5a00;
-  --color-volt: #ffe600;
-  --color-grape: #c77dff;
+  /* soft premium pastel palette */
+  --color-bg: #fff7fb;
+  --color-surface: #ffffff;
+  --color-raised: #f8f1fb;
+  --color-line: #f0e3f1;
+  --color-fg: #3b2a4a;
+  --color-ink: #3b2a4a;
+  --color-muted: #9a88a8;
+  --color-acid: #ff8cc3; /* primary pink */
+  --color-hot: #ff5c9d;
+  --color-cyan: #9ad4ff;
+  --color-fire: #ffb37a;
+  --color-volt: #ffe27a;
+  --color-grape: #b9a2ff;
+  --color-mint: #9be8c4;
+
+  --shadow-soft: 0 10px 30px -12px rgb(160 90 170 / 0.35);
+  --shadow-softer: 0 4px 16px -8px rgb(160 90 170 / 0.3);
+  --shadow-pop: 0 18px 40px -14px rgb(255 92 157 / 0.55);
 
   --animate-marquee: marquee 40s linear infinite;
   --animate-wobble: wobble 0.6s ease-in-out;
-  --animate-pop: pop 0.3s cubic-bezier(0.2, 1.6, 0.4, 1);
-  --animate-rise: rise 0.28s cubic-bezier(0.2, 1.2, 0.4, 1);
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+  --animate-rise: rise 0.3s cubic-bezier(0.2, 1.2, 0.4, 1);
   --animate-stamp: stamp 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
-  --animate-float: float 3s ease-in-out infinite;
+  --animate-float: float 3.4s ease-in-out infinite;
+  --animate-blob: blob 18s ease-in-out infinite;
+  --animate-squish: squish 0.45s cubic-bezier(0.3, 1.8, 0.4, 1);
 
   @keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
   @keyframes wobble {
     0%, 100% { transform: rotate(0) scale(1) }
-    20% { transform: rotate(-12deg) scale(1.15) }
-    40% { transform: rotate(10deg) scale(1.1) }
-    60% { transform: rotate(-6deg) scale(1.12) }
-    80% { transform: rotate(4deg) scale(1.05) }
+    25% { transform: rotate(-10deg) scale(1.12) }
+    50% { transform: rotate(8deg) scale(1.08) }
+    75% { transform: rotate(-4deg) scale(1.04) }
   }
-  @keyframes pop { from { transform: scale(0.5); opacity: 0 } to { transform: scale(1); opacity: 1 } }
-  @keyframes rise { from { transform: translateY(28px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+  @keyframes pop { from { transform: scale(0.6); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+  @keyframes rise { from { transform: translateY(24px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
   @keyframes stamp {
-    0% { transform: translate(-50%, -50%) rotate(-14deg) scale(2.4); opacity: 0 }
-    25% { transform: translate(-50%, -50%) rotate(-10deg) scale(1); opacity: 1 }
-    80% { transform: translate(-50%, -50%) rotate(-10deg) scale(1); opacity: 1 }
-    100% { transform: translate(-50%, -50%) rotate(-10deg) scale(0.9); opacity: 0 }
+    0% { transform: translate(-50%, -30%) scale(0.4); opacity: 0 }
+    25% { transform: translate(-50%, -50%) scale(1.08); opacity: 1 }
+    75% { transform: translate(-50%, -60%) scale(1); opacity: 1 }
+    100% { transform: translate(-50%, -90%) scale(0.9); opacity: 0 }
   }
-  @keyframes float { 0%, 100% { transform: translateY(0) rotate(-4deg) } 50% { transform: translateY(-10px) rotate(4deg) } }
+  @keyframes float { 0%, 100% { transform: translateY(0) rotate(-3deg) } 50% { transform: translateY(-10px) rotate(3deg) } }
+  @keyframes blob {
+    0%, 100% { transform: translate(0, 0) scale(1) }
+    33% { transform: translate(40px, -30px) scale(1.1) }
+    66% { transform: translate(-30px, 20px) scale(0.95) }
+  }
+  @keyframes squish {
+    0% { transform: scale(1, 1) }
+    30% { transform: scale(1.18, 0.82) }
+    55% { transform: scale(0.9, 1.1) }
+    75% { transform: scale(1.04, 0.97) }
+    100% { transform: scale(1, 1) }
+  }
 }
 
 @layer base {
-  html { -webkit-tap-highlight-color: transparent; color-scheme: dark; }
-  body {
-    @apply bg-bg text-fg font-sans antialiased;
-    /* film grain */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
-  }
-  ::selection { background: var(--color-acid); color: #000; }
-  :focus-visible { outline: 2px solid var(--color-acid); outline-offset: 2px; }
-  input[type='range'] { accent-color: var(--color-acid); }
+  html { -webkit-tap-highlight-color: transparent; color-scheme: light; }
+  body { @apply bg-bg text-fg font-sans antialiased; }
+  ::selection { background: var(--color-acid); color: #fff; }
+  :focus-visible { outline: 3px solid color-mix(in oklab, var(--color-acid) 70%, white); outline-offset: 2px; }
+  input[type='range'] { accent-color: var(--color-hot); }
 }
 
-/* Classic meme caption text: white with a fat black outline */
+/* Headline style (kept the class name; now soft + rounded instead of meme captions) */
 @utility meme {
   font-family: var(--font-display);
-  text-transform: uppercase;
-  color: #fff;
-  -webkit-text-stroke: 0.09em #000;
-  paint-order: stroke fill;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-fg);
+}
+@utility gradient-text {
+  background: linear-gradient(100deg, #ff5c9d 0%, #c08cff 50%, #6fb8ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility glass {
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
 }
 @utility btn {
   display: inline-flex;
@@ -72,7 +98,8 @@
   gap: 0.5rem;
   border-radius: 9999px;
   font-weight: 800;
-  transition: transform 0.12s ease, background-color 0.15s ease;
+  transition: transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1), background-color 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  &:hover { transform: translateY(-1px); }
   &:active { transform: scale(0.94); }
 }
 @utility no-scrollbar {
@@ -80,10 +107,10 @@
   &::-webkit-scrollbar { display: none; }
 }
 @utility checker {
-  background-color: #1a1a1a;
+  background-color: #fff;
   background-image:
-    linear-gradient(45deg, #232323 25%, transparent 25%), linear-gradient(-45deg, #232323 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #232323 75%), linear-gradient(-45deg, transparent 75%, #232323 75%);
+    linear-gradient(45deg, #f6eef8 25%, transparent 25%), linear-gradient(-45deg, #f6eef8 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f6eef8 75%), linear-gradient(-45deg, transparent 75%, #f6eef8 75%);
   background-size: 16px 16px;
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
 }

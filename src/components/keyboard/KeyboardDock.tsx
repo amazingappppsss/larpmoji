@@ -17,6 +17,7 @@ export function KeyboardDock() {
       const t = e.target as HTMLElement
       if (e.key.toLowerCase() !== 'k' || e.metaKey || e.ctrlKey || e.altKey) return
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName) || t.isContentEditable) return
+      e.preventDefault()
       setKeyboardOpen(!keyboardOpen)
     }
     window.addEventListener('keydown', onKey)
@@ -37,7 +38,7 @@ export function KeyboardDock() {
       {!keyboardOpen && !openEmoji && route !== 'create' && (
         <button
           onClick={() => setKeyboardOpen(true)}
-          className="btn lg:hidden fixed z-30 right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:right-6 sm:bottom-6 h-14 pl-4 pr-5 bg-acid text-black shadow-2xl shadow-black/70 animate-pop hover:brightness-110"
+          className="btn lg:hidden fixed z-30 right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:right-6 sm:bottom-6 h-14 pl-4 pr-5 bg-acid text-ink shadow-pop animate-pop hover:brightness-110"
           aria-label="Open Keyboard"
         >
           <Keyboard className="size-5" aria-hidden />

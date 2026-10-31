@@ -1,4 +1,5 @@
 import { Header } from './components/Header'
+import { Backdrop } from './components/Backdrop'
 import { Marquee } from './components/Marquee'
 import { EmojiModal } from './components/EmojiModal'
 import { Toasts } from './components/Toasts'
@@ -20,6 +21,7 @@ function Routes() {
 export default function App() {
   return (
     <AppStoreProvider>
+      <Backdrop />
       <Header />
       <div className="overflow-hidden">
         <Marquee />
@@ -27,10 +29,10 @@ export default function App() {
       <main className="pb-32">
         <Routes />
       </main>
-      <footer className="border-t border-line text-xs text-muted">
+      <footer className="border-t border-line text-xs font-semibold text-muted bg-white/50">
         <div className="mx-auto max-w-7xl px-5 py-6 flex flex-wrap justify-between gap-2">
           <span>
-            <span className="meme text-base">LARP<span className="text-acid">MOJI</span></span> · emojis look like your phone’s own style
+            <span className="font-display font-bold text-base text-fg">larp<span className="gradient-text">moji</span></span> · made with ♡ for the group chat
           </span>
           <span>/ search · K keyboard</span>
         </div>

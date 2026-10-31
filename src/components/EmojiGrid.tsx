@@ -17,8 +17,8 @@ export function EmptyState({ glyph, title, children }: { glyph: string; title: s
   return (
     <div className="mx-auto max-w-md text-center py-16">
       <div className="text-6xl mb-4 inline-block animate-float" aria-hidden>{glyph}</div>
-      <h3 className="meme text-4xl mb-2">{title}</h3>
-      <div className="text-muted">{children}</div>
+      <h3 className="meme text-3xl mb-2">{title}</h3>
+      <div className="text-muted font-semibold">{children}</div>
     </div>
   )
 }

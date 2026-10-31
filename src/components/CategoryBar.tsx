@@ -21,11 +21,11 @@ export function CategoryBar({ value, onChange, counts }: Props) {
               aria-selected={active}
               onClick={() => onChange(c.id)}
               style={active ? { background: c.color, borderColor: c.color } : undefined}
-              className={`btn h-10 px-4 text-sm border whitespace-nowrap ${active ? 'text-black' : 'border-line bg-surface text-fg/85 hover:border-fg/40'}`}
+              className={`btn h-10 px-4 text-sm border whitespace-nowrap ${active ? 'text-ink' : 'border-line bg-surface text-fg/85 hover:border-fg/40'}`}
             >
               <span aria-hidden className="text-lg leading-none">{c.glyph}</span>
               {c.label}
-              <span className={`text-[11px] ${active ? 'text-black/60' : 'text-muted'}`}>{counts[c.id] ?? 0}</span>
+              <span className={`text-[11px] ${active ? 'text-ink/60' : 'text-muted'}`}>{counts[c.id] ?? 0}</span>
             </button>
           )
         })}

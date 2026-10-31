@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Emoji } from '../types'
 import { EMOJIS, generatedEmoji } from '../data/emojis'
+import { generatedCutie } from '../data/cuteEmojis'
 import { useLocalStorage } from './useLocalStorage'
 
 export type Route = 'explore' | 'favourites' | 'create' | 'stickers'
@@ -75,7 +76,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [favourites, setFavourites] = useLocalStorage<string[]>('larpmoji:favourites', [], onStorageError)
   const [customEmojis, setCustomEmojis] = useLocalStorage<Emoji[]>('larpmoji:custom', [], onStorageError)
   const [recent, setRecent] = useLocalStorage<string[]>('larpmoji:recent', [], onStorageError)
-  const [pack, setPack] = useLocalStorage<StickerPack>('larpmoji:pack', { name: 'My Cursed Pack', author: '', outline: true, ids: [] }, onStorageError)
+  const [pack, setPack] = useLocalStorage<StickerPack>('larpmoji:pack', { name: 'My Cute Pack', author: '', outline: true, ids: [] }, onStorageError)
   const packSet = useMemo(() => new Set(pack.ids), [pack.ids])
   const [openEmoji, setOpenEmoji] = useState<Emoji | null>(null)
   const [keyboardOpen, setKeyboardOpen] = useState(false)
@@ -111,7 +112,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const favSet = useMemo(() => new Set(favourites), [favourites])
   const byId = useMemo(() => new Map(allEmojis.map((e) => [e.id, e])), [allEmojis])
   const resolveEmoji = useCallback(
-    (id: string) => byId.get(id) ?? (id.startsWith('gen-') ? generatedEmoji(Number(id.slice(4))) : undefined),
+    (id: string) => byId.get(id) ?? (id.startsWith('gen-') ? generatedEmoji(Number(id.slice(4))) : id.startsWith('cutie-') ? generatedCutie(Number(id.slice(6))) : undefined),
     [byId],
   )
 
@@ -138,6 +139,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     pack,
     updatePack: (patch) => setPack((p) => ({ ...p, ...patch })),
     togglePack: (e) => {
+      if (e.text) return toast('Text emojis paste as text, no sticker needed ♡', 'info')
       const had = packSet.has(e.id)
       if (!had && pack.ids.length >= 120) return toast('Packs max out at 120 stickers.', 'error')
       setPack((p) => ({ ...p, ids: had ? p.ids.filter((x) => x !== e.id) : [...p.ids, e.id] }))
